@@ -1,8 +1,10 @@
 from flask import jsonify, abort
+from flask_login import login_required
 from api.models import BucketList, Item
-from app import app, db
+from app import app, auth, db, login_manager
 
 @app.route('/bucketlist/api/v1.0/bucketlists/', methods=['GET'])
+@auth.login_required
 def get_bucketlists():
     """Returns all bucketlists"""
     bucket = db.session.query(BucketList).all()
@@ -24,6 +26,7 @@ def get_bucketlists():
     return jsonify({"bucketlists": bucketlists})
 
 @app.route('/bucketlist/api/v1.0/bucketlists/<int:id>', methods=['GET'])
+@auth.login_required
 def get_bucketlist(id):
     """Returns a bucketlist using ID"""
     bucket = db.session.query(BucketList).filter(BucketList.id==id).first()
@@ -46,6 +49,7 @@ def get_bucketlist(id):
     return jsonify({"bucketlist": bucketlist[0]})
 
 @app.route('/bucketlist/api/v1.0/bucketlists/', methods=['POST'])
+@auth.login_required
 def add_bucketlist():
     """Creates new bucketlist"""
     bucketlist = []
@@ -63,6 +67,7 @@ def add_bucketlist():
     return jsonify({'bucketlist': bucketlist[0]}), 201
 
 @app.route('/bucketlist/api/v1.0/bucketlists/<int:id>', methods=['PUT'])
+@auth.login_required
 def update_bucketlist(id):
     """Updates a bucketlist"""
     name = request.json.get('name')
@@ -88,6 +93,7 @@ def update_bucketlist(id):
     abort(404)
 
 @app.route('/bucketlist/api/v1.0/bucketlists/<int:id>', methods=['DELETE'])
+@auth.login_required
 def delete_bucketlist(id):
     """Deletes a bucketlist"""
     bucketlist = db.session.query(BucketList).filter(BucketList.id==id).first()
@@ -98,6 +104,7 @@ def delete_bucketlist(id):
     abort(404)
 
 @app.route('/bucketlist/api/v1.0/bucketlists/<int:id>/items/', methods=['POST'])
+@auth.login_required
 def add_item():
     """Creates new bucketlist item"""
     name = request.json.get('name')
@@ -113,6 +120,7 @@ def add_item():
     return jsonify({'item': item[0]}), 201
 
 @app.route('/bucketlist/api/v1.0/bucketlists/<int:id>/items/<int:id>', methods=['PUT'])
+@auth.login_required
 def update_item(id):
     """Updates a bucketlist item"""
     name = request.json.get('name')
@@ -130,6 +138,7 @@ def update_item(id):
     abort(404)
 
 @app.route('/bucketlist/api/v1.0/bucketlists/<int:id>/items/<int:id>', methods=['DELETE'])
+@auth.login_required
 def delete_item(id):
     """Deletes a bucketlist item"""
     item = db.session.query(BucketList).filter(BucketList.id==id).first()
