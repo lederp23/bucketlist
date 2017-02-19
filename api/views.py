@@ -11,7 +11,8 @@ def get_bucketlists():
     """Returns all bucketlists"""
     args = request.args
     limit = ((int(args['limit']) if int(args['limit'])< 100 else PER_PAGE) if args['limit'] else PER_PAGE)
-    bucket = db.session.query(BucketList).all()
+    start = (args['q'] if args['q'] else "")
+    bucket = db.session.query(BucketList).filter(BucketList.name.like(start)).all()
     bucketlists = []
     for bucketlist in bucket:
         items = []
