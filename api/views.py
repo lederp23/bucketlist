@@ -1,12 +1,16 @@
-from flask import jsonify, abort
+from flask import jsonify, abort, request
 from flask_login import login_required
 from api.models import BucketList, Item
 from app import app, auth, db, login_manager
+
+PER_PAGE = 20
 
 @app.route('/bucketlist/api/v1.0/bucketlists/', methods=['GET'])
 @auth.login_required
 def get_bucketlists():
     """Returns all bucketlists"""
+    args = request.args
+    limit = ((int(args['limit']) if int(args['limit'])< 100 else PER_PAGE) if args['limit'] else PER_PAGE)
     bucket = db.session.query(BucketList).all()
     bucketlists = []
     for bucketlist in bucket:
@@ -23,6 +27,7 @@ def get_bucketlists():
                            "date_created": bucketlist.date_created,\
                            "date_modified": bucketlist.date_modified,\
                            "created_by": bucketlist.created_by)
+    bucketlists=bucketlist.paginate(1, limit, len(bucketlists))
     return jsonify({"bucketlists": bucketlists})
 
 @app.route('/bucketlist/api/v1.0/bucketlists/<int:id>', methods=['GET'])
