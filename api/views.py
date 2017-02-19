@@ -50,7 +50,7 @@ def add_bucketlist():
     """Creates new bucketlist"""
     bucketlist = []
     items = []
-    name = request.form['name']
+    name = request.json.get('name')
     bucket = BucketList(name=name)
     db.session.add(bucket)
     db.session.commit()
@@ -65,7 +65,7 @@ def add_bucketlist():
 @app.route('/bucketlist/api/v1.0/bucketlists/<int:id>', methods=['PUT'])
 def update_bucketlist(id):
     """Updates a bucketlist"""
-    name = request.form['name']
+    name = request.json.get('name')
     bucket = db.session.query(BucketList).filter(BucketList.id==id).first()
     bucketlist = []
     items=[]
@@ -100,7 +100,7 @@ def delete_bucketlist(id):
 @app.route('/bucketlist/api/v1.0/bucketlists/<int:id>/items/', methods=['POST'])
 def add_item():
     """Creates new bucketlist item"""
-    name = request.form['name']
+    name = request.json.get('name')
     items=[]
     item = Item(name=name)
     db.session.add(item)
@@ -115,7 +115,7 @@ def add_item():
 @app.route('/bucketlist/api/v1.0/bucketlists/<int:id>/items/<int:id>', methods=['PUT'])
 def update_item(id):
     """Updates a bucketlist item"""
-    name = request.form['name']
+    name = request.json.get('name')
     items=[]
     item = db.session.query(Item).filter(Item.id==id).first()
     if item:

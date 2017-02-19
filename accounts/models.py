@@ -18,3 +18,9 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.username
+
+    def hash_password(self, new_password):
+        self.password = pwd_context.encrypt(new_password)
+
+    def verify_password(self, current_password):
+        return pwd_context.verify(current_password, self.password)
