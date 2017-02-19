@@ -2,6 +2,7 @@ from app import db
 from sqlalchemy import Column, Integer, String
 
 class User(db.Model):
+    """Model for users"""
     __tablename__ = 'users'
     id = db.Column(Integer, autoincrement=True)
     username = db.Column(String, unique=True, primary_key=True)
