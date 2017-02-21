@@ -11,6 +11,8 @@ from flask_httpauth import HTTPBasicAuth
 from flask.blueprints import Blueprint
 from flask import request, jsonify, abort
 from flask_security import auth_token_required
+from flask_paginate import Pagination
+from app import login_manager
 
 api = Blueprint('api', __name__, template_folder='templates')
 db = SQLAlchemy()
@@ -19,13 +21,15 @@ auth = HTTPBasicAuth()
 PER_PAGE = 20
 
 @api.route('/bucketlist/api/v1.0/bucketlists/', methods=['GET'])
-@auth.login_required
+@login_manager.token_loader
 def get_bucketlists():
     """Returns all bucketlists"""
-    args = request.args
-    limit = ((int(args['limit']) if int(args['limit'])< 100 else PER_PAGE) if args['limit'] else PER_PAGE)
-    start = (args['q'] if args['q'] else "")
-    bucket = db.session.query(BucketList).filter(BucketList.name.like(start)).all()
+    limit = (request.args.get('limit') if request.args.get('limit') else PER_PAGE)
+    start = request.args.get('q')
+    if start:
+        bucket = db.session.query(BucketList).filter(BucketList.name.contains(start)).all()
+    else:
+        bucket = db.session.query(BucketList).all()
     bucketlists = []
     for bucketlist in bucket:
         items = []
@@ -41,11 +45,11 @@ def get_bucketlists():
                            "date_created": bucketlist.date_created,\
                            "date_modified": bucketlist.date_modified,\
                            "created_by": bucketlist.created_by})
-    bucketlists=bucketlist.paginate(1, limit, len(bucketlists))
+    pagination = Pagination(page=1, total=len(bucketlists))
     return jsonify({"bucketlists": bucketlists})
 
 @api.route('/bucketlist/api/v1.0/bucketlists/<int:id>', methods=['GET'])
-@auth.login_required
+@login_manager.token_loader
 def get_bucketlist(id):
     """Returns a bucketlist using ID"""
     bucket = db.session.query(BucketList).filter(BucketList.id==id).first()
@@ -67,14 +71,14 @@ def get_bucketlist(id):
         abort(404)
     return jsonify({"bucketlist": bucketlist[0]})
 
-@api.route('/bucketlist/api/v1.0/bucketlists/', methods=['GET', 'POST'])
-@auth.login_required
+@api.route('/bucketlist/api/v1.0/bucketlists/', methods=['POST'])
+@login_manager.token_loader
 def add_bucketlist():
     """Creates new bucketlist"""
     bucketlist = []
     items = []
-    name = requestform['name']
-    bucket = BucketList(name=name)
+    name = request.form['name']
+    bucket = BucketList(name=name, created_by=' ')
     db.session.add(bucket)
     db.session.commit()
     bucketlist.append({"id": bucket.id,\
@@ -86,10 +90,10 @@ def add_bucketlist():
     return jsonify({'bucketlist': bucketlist[0]})
 
 @api.route('/bucketlist/api/v1.0/bucketlists/<int:id>', methods=['PUT'])
-@auth.login_required
+@login_manager.token_loader
 def update_bucketlist(id):
     """Updates a bucketlist"""
-    name = request.json.get('name')
+    name = request.form['name']
     bucket = db.session.query(BucketList).filter(BucketList.id==id).first()
     bucketlist = []
     items=[]
@@ -112,7 +116,7 @@ def update_bucketlist(id):
     abort(404)
 
 @api.route('/bucketlist/api/v1.0/bucketlists/<int:id>', methods=['DELETE'])
-@auth.login_required
+@login_manager.token_loader
 def delete_bucketlist(id):
     """Deletes a bucketlist"""
     bucketlist = db.session.query(BucketList).filter(BucketList.id==id).first()
@@ -123,12 +127,12 @@ def delete_bucketlist(id):
     abort(404)
 
 @api.route('/bucketlist/api/v1.0/bucketlists/<int:id>/items/', methods=['GET', 'POST'])
-@auth.login_required
-def add_item():
+@login_manager.token_loader
+def add_item(id):
     """Creates new bucketlist item"""
-    name = requestform['name']
+    name = request.form['name']
     items=[]
-    item = Item(name=name)
+    item = Item(name=name, bucketlist=id)
     db.session.add(item)
     db.session.commit()
     items.append({"id": item.id,\
@@ -136,13 +140,13 @@ def add_item():
                   "date_created": item.date_created,\
                   "date_modified": item.date_modified,\
                   "done": item.done})
-    return jsonify({'item': item[0]})
+    return jsonify({'item': items[0]})
 
 @api.route('/bucketlist/api/v1.0/bucketlists/<int:id>/items/<int:item_id>', methods=['PUT'])
-@auth.login_required
-def update_item(item_id):
+@login_manager.token_loader
+def update_item(id, item_id):
     """Updates a bucketlist item"""
-    name = request.json.get('name')
+    name = request.form['name']
     items=[]
     item = db.session.query(Item).filter(Item.id==item_id).first()
     if item:
@@ -153,16 +157,16 @@ def update_item(item_id):
                       "date_created": item.date_created,\
                       "date_modified": item.date_modified,\
                       "done": item.done})
-        return jsonify({'item': item[0]})
+        return jsonify({'item': items[0]})
     abort(404)
 
 @api.route('/bucketlist/api/v1.0/bucketlists/<int:id>/items/<int:item_id>', methods=['DELETE'])
-@auth.login_required
-def delete_item(item_id):
+@login_manager.token_loader
+def delete_item(id,item_id):
     """Deletes a bucketlist item"""
-    item = db.session.query(BucketList).filter(BucketList.id==item_id).first()
+    item = db.session.query(Item).filter(Item.id==item_id).first()
     if item:
-        db.session.delete(bucketlist)
+        db.session.delete(item)
         db.session.commit()
         return jsonify({'result': True})
     abort(404)

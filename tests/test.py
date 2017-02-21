@@ -16,13 +16,15 @@ class TestApi(TestCase):
         self.app = app.test_client()
 
     def test_get_bucketlists(self):
-        payload={'username':'oliver', 'password':'munlaz', 'email': 'a@b.c'}
-        response = requests.get('http://127.0.0.1:5000/auth/register', json=payload)
+        payload={'username':'oliverd', 'password':'munlazd', 'email': 'a@b.cd'}
+        response = requests.get('http://127.0.0.1:5000/auth/register', data=payload)
         print(response)
-        response = requests.get('http://127.0.0.1:5000/auth/login', json=payload)
+        response = requests.get('http://127.0.0.1:5000/auth/login', data=payload)
         print(response)
-        response = requests.get('http://127.0.0.1:5000/auth/token', json=payload)
+        response = requests.get('http://127.0.0.1:5000/auth/token', data=payload)
+        print(response.content)
+        token = response.content
+        payload={'limit':20, 'q': ''}
+        response = requests.get('http://127.0.0.1:5000/bucketlist/api/v1.0/bucketlists/',data=payload, headers={'Authorization': token})
         print(response)
-        response = requests.get('http://127.0.0.1:5000/bucketlist/api/v1.0/bucketlists/')
-        print(response)
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 200)

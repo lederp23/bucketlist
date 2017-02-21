@@ -9,9 +9,11 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_httpauth import HTTPBasicAuth
 from flask.blueprints import Blueprint
 from flask import request, jsonify
-
+from app import login_manager, app
+from itsdangerous import URLSafeTimedSerializer
 
 accounts = Blueprint('accounts', __name__, template_folder='templates')
+login_serializer = URLSafeTimedSerializer(app.secret_key)
 
 db = SQLAlchemy()
 auth = HTTPBasicAuth()
@@ -45,11 +47,13 @@ def register():
     db.session.commit()
     return jsonify({ 'username': user.username })
 
-@accounts.route('/auth/token')
-@auth.login_required
+@accounts.route('/auth/token', methods=['GET', 'POST'])
 def get_auth_token():
-    token = g.user.generate_token()
-    return jsonify({ 'token': token.decode('ascii') })
+        """Encode a secure token for cookie"""
+        username = request.form['username']
+        password = request.form['password']
+        data = [username, password]
+        return login_serializer.dumps(data)
 
 @auth.verify_password
 def verify_password(username_or_token, password):
@@ -60,3 +64,12 @@ def verify_password(username_or_token, password):
             return False
     g.user = user
     return True
+
+@login_manager.token_loader
+def load_token(token):
+    max_age = app.config["REMEMBER_COOKIE_DURATION"].total_seconds()
+    data = login_serializer.loads(token, max_age=max_age)
+    user = User.get(data[0])
+    if user and data[1] == user.password:
+        return user
+    return None
