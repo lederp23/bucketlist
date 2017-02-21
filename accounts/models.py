@@ -1,8 +1,16 @@
-from app import db
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir)
 from sqlalchemy import Column, Integer, String
+from flask_sqlalchemy import SQLAlchemy
 from itsdangerous import (TimedJSONWebSignatureSerializer
                           as Serializer, BadSignature, SignatureExpired)
-
+from werkzeug.security import generate_password_hash, check_password_hash
+from api.models import BucketList
+from flask import Flask
+from config import *
+from app import db, app
 
 class User(db.Model):
     """Model for users"""
@@ -12,7 +20,7 @@ class User(db.Model):
     email = db.Column(String, unique=True)
     password = db.Column(String)
     api_key = db.Column(String, unique=True)
-    bucketlists = db.relationship('BucketList', backref='users', lazy='dynamic')
+    bucketlists = db.relationship(BucketList, backref='users', lazy='dynamic')
 
     def __init__(self, username, email, password):
         self.username = username
@@ -24,11 +32,11 @@ class User(db.Model):
 
     def hash_password(self, new_password):
         """Hashes provided password"""
-        self.password = pwd_context.encrypt(new_password)
+        self.password = generate_password_hash(new_password)
 
     def verify_password(self, current_password):
         """Verifies provided password"""
-        return pwd_context.verify(current_password, self.password)
+        return check_password_hash(self.password, current_password)
 
     def generate_token(self, expiration = 600):
         """Generates authorization token for a user"""
