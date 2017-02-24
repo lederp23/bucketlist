@@ -4,21 +4,16 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0,parentdir)
 from flask import g
 from flask import jsonify, abort, request
-from flask_login import login_required
-from api.models import BucketList, Item
-from accounts.views import requires_auth
+from bucketlist_modules.api.models import BucketList, Item
+from bucketlist_modules.accounts.views import requires_auth
 from config import ProductionConfig
 from flask_sqlalchemy import SQLAlchemy
-from flask_httpauth import HTTPBasicAuth
 from flask.blueprints import Blueprint
 from flask import request, jsonify, abort
-from flask_security import auth_token_required
 from flask_paginate import Pagination
-from app import login_manager
+from app import db
 
 api = Blueprint('api', __name__, template_folder='templates')
-db = SQLAlchemy()
-auth = HTTPBasicAuth()
 
 PER_PAGE = 20
 
@@ -26,7 +21,7 @@ PER_PAGE = 20
 @requires_auth
 def get_bucketlists():
 	"""Returns all bucketlists"""
-	limit = (request.args.get('limit') if request.args.get('limit') else PER_PAGE)
+	limit = int(request.args.get('limit') if request.args.get('limit') else PER_PAGE)
 	start = request.args.get('q')
 	if start:
 		bucket = db.session.query(BucketList).filter(BucketList.name.contains(start)).all()
@@ -48,7 +43,7 @@ def get_bucketlists():
 						   "date_modified": bucketlist.date_modified,\
 						   "created_by": bucketlist.created_by})
 	pagination = Pagination(page=1, total=len(bucketlists))
-	return jsonify({"bucketlists": bucketlists})
+	return jsonify({"bucketlists": bucketlists[:limit]})
 
 @api.route('/bucketlist/api/v1.0/bucketlists/<int:id>', methods=['GET'])
 @requires_auth
@@ -57,19 +52,20 @@ def get_bucketlist(id):
 	bucket = db.session.query(BucketList).filter(BucketList.id==id).first()
 	bucketlist = []
 	items = []
-	for item in bucket.items:
-		items.append({"id": item.id,\
-					  "name": item.name,\
-					  "date_created": item.date_created,\
-					  "date_modified": item.date_modified,\
-					  "done": item.done})
-	bucketlist.append({"id": bucket.id,\
-					   "name": bucket.name,\
-					   "items": items,\
-					   "date_created": bucket.date_created,\
-					   "date_modified": bucket.date_modified,\
-					   "created_by": bucket.created_by})
-	if len(bucketlist) == 0:
+	if bucket:
+		for item in bucket.items:
+			items.append({"id": item.id,\
+						  "name": item.name,\
+						  "date_created": item.date_created,\
+						  "date_modified": item.date_modified,\
+						  "done": item.done})
+		bucketlist.append({"id": bucket.id,\
+						   "name": bucket.name,\
+						   "items": items,\
+						   "date_created": bucket.date_created,\
+						   "date_modified": bucket.date_modified,\
+						   "created_by": bucket.created_by})
+	else:
 		abort(404)
 	return jsonify({"bucketlist": bucketlist[0]})
 
@@ -102,19 +98,7 @@ def update_bucketlist(id):
 	if bucket:
 		bucket.name = name
 		db.session.commit()
-		for item in bucket.items:
-			items.append({"id": item.id,\
-						  "name": item.name,\
-						  "date_created": item.date_created,\
-						  "date_modified": item.date_modified,\
-						  "done": item.done})
-		bucketlist.append({"id": bucket.id,\
-						   "name": bucket.name,\
-						   "items": items,\
-						   "date_created": bucket.date_created,\
-						   "date_modified": bucket.date_modified,\
-						   "created_by": bucket.created_by})
-		return jsonify({'bucketlist': bucketlist[0]})
+		return jsonify({'result': True})
 	abort(404)
 
 @api.route('/bucketlist/api/v1.0/bucketlists/<int:id>', methods=['DELETE'])
@@ -135,6 +119,9 @@ def add_item(id):
 	name = request.form['name']
 	items=[]
 	item = Item(name=name, bucketlist=id)
+	bucketlist = db.session.query(BucketList).filter(BucketList.id==id).first()
+	if not bucketlist:
+		abort(404)
 	db.session.add(item)
 	db.session.commit()
 	items.append({"id": item.id,\
@@ -151,6 +138,9 @@ def update_item(id, item_id):
 	"""Updates a bucketlist item"""
 	name = request.form['name']
 	items=[]
+	bucketlist = db.session.query(BucketList).filter(BucketList.id==id).first()
+	if not bucketlist:
+		abort(404)
 	item = db.session.query(Item).filter(Item.id==item_id).first()
 	if item:
 		item.name = name

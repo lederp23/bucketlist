@@ -22,9 +22,6 @@ class Item(db.Model):
         self.name = name
         self.bucketlist_id = bucketlist
 
-    def __repr__(self):
-        return '<Item %r>' % self.name
-
 class BucketList(db.Model):
     """Model for bucketlists"""
     __tablename__ = 'bucketlists'
@@ -40,6 +37,3 @@ class BucketList(db.Model):
     def __init__(self, name, created_by):
         self.name = name
         self.created_by = created_by
-
-    def __repr__(self):
-        return '<BucketList %r>' % self.name

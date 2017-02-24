@@ -8,9 +8,8 @@ from flask_sqlalchemy import SQLAlchemy
 from itsdangerous import (TimedJSONWebSignatureSerializer
 						  as Serializer, BadSignature, SignatureExpired)
 from werkzeug.security import generate_password_hash, check_password_hash
-from api.models import BucketList
+from bucketlist_modules.api.models import BucketList
 from flask import Flask
-from config import *
 from app import db, app
 
 class User(db.Model):
@@ -20,16 +19,12 @@ class User(db.Model):
 	username = db.Column(String, unique=True, primary_key=True)
 	email = db.Column(String, unique=True)
 	password = db.Column(String)
-	api_key = db.Column(String, unique=True)
 	bucketlists = db.relationship(BucketList, backref='users', lazy='dynamic')
 
 	def __init__(self, username, email, password):
 		self.username = username
 		self.email = email
 		self.password = password
-
-	def __repr__(self):
-		return '<User %r>' % self.username
 
 	def hash_password(self, new_password):
 		"""Hashes provided password"""
@@ -39,7 +34,7 @@ class User(db.Model):
 		"""Verifies provided password"""
 		return check_password_hash(self.password, current_password)
 
-	def generate_token(self, expiration = 7200):
+	def generate_token(self, expiration = 2):
 		"""Generates authorization token for a user"""
 		serializer = Serializer(app.config['SECRET_KEY'], expires_in = expiration)
 		return serializer.dumps({ 'id': self.id})
