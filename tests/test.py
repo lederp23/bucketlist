@@ -6,10 +6,10 @@ sys.path.insert(0,parentdir)
 from unittest import TestCase
 from flask_sqlalchemy import SQLAlchemy
 from app import app, db
-from bucketlist_modules.accounts.models import User
-from bucketlist_modules.api.models import BucketList, Item
-from bucketlist_modules.accounts.views import accounts
-from bucketlist_modules.api.views import api
+from v1.bucketlist_modules.accounts.models import User
+from v1.bucketlist_modules.api.models import BucketList, Item
+from v1.bucketlist_modules.accounts.views import accounts
+from v1.bucketlist_modules.api.views import api
 import json
 
 class MyTest(TestCase):
@@ -28,24 +28,36 @@ class MyTest(TestCase):
         response = self.test_app.get("/auth/register", data=payload)
         self.assertEqual(response.status_code, 400)
 
+        #asserts error if email is invalid
+        payload = {'username': 'lederp', 'password': 'lederp', 'email': 'email'}
+        response = self.test_app.get("/auth/register", data=payload)
+        data = json.loads(response.get_data(as_text=True))
+        self.assertEqual(data['error'], 'invalid email')
+
+        #asserts error if username is invalid
+        payload = {'username': 'lederp*#', 'password': 'lederp', 'email': 'lederp@gmail.com'}
+        response = self.test_app.get("/auth/register", data=payload)
+        data = json.loads(response.get_data(as_text=True))
+        self.assertEqual(data['error'], 'username cannot have special characters')
+
         #asserts status code 400 if username or password is not sent in request
         response = self.test_app.get("/auth/register")
         self.assertEqual(response.status_code, 400)
 
         #asserts that the user has been registered
-        payload = {'username': 'lederp', 'password': 'lederp', 'email': 'z@b.c'}
+        payload = {'username': 'lederp', 'password': 'lederp', 'email': 'lederp@gmail.com'}
         response = self.test_app.get("/auth/register", data=payload)
         self.assertEqual(response.status_code, 200)
 
         #asserts that the user already exists
-        payload = {'username': 'lederp', 'password': 'lederp', 'email': 'z@b.c'}
+        payload = {'username': 'lederp', 'password': 'lederp', 'email': 'lederp@gmail.com'}
         response = self.test_app.get("/auth/register", data=payload)
         data = json.loads(response.get_data(as_text=True))
         self.assertEqual(data['error'], 'user already exists')
 
     def test_login(self):
         """Tests for login"""
-        payload = {'username': 'lederp', 'password': 'lederp', 'email': 'z@b.c'}
+        payload = {'username': 'lederp', 'password': 'lederp', 'email': 'lederp@gmail.com'}
         response = self.test_app.get("/auth/register", data=payload)
 
         #asserts status code 400 if form data is not sent in request
@@ -59,18 +71,18 @@ class MyTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         #asserts user is not authorized with wrong password
-        payload = {'username': 'lederp', 'password': 'leder', 'email': 'z@b.c'}
+        payload = {'username': 'lederp', 'password': 'leder', 'email': 'lederp@gmail.com'}
         response = self.test_app.get("/auth/login", data=payload)
         self.assertEqual(response.status_code, 401)
 
         #asserts that a non-existant user cannot login
-        payload = {'username': 'oliver', 'password': 'leder', 'email': 'z@b.c'}
+        payload = {'username': 'oliver', 'password': 'leder', 'email': 'lederp@gmail.com'}
         response = self.test_app.get("/auth/login", data=payload)
         self.assertEqual(response.status_code, 404)
 
     def test_add_bucketlist(self):
         """Tests for adding a bucketlist"""
-        payload = {'username': 'lederp', 'password': 'lederp', 'email': 'z@b.c'}
+        payload = {'username': 'lederp', 'password': 'lederp', 'email': 'lederp@gmail.com'}
         response = self.test_app.get("/auth/register", data=payload)
         response = self.test_app.get("/auth/login", data=payload)
         data = json.loads(response.get_data(as_text=True))
@@ -114,7 +126,7 @@ class MyTest(TestCase):
 
     def test_get_bucketlists(self):
         """Tests for getting bucketlists"""
-        payload = {'username': 'lederp', 'password': 'lederp', 'email': 'z@b.c'}
+        payload = {'username': 'lederp', 'password': 'lederp', 'email': 'lederp@gmail.com'}
         response = self.test_app.get("/auth/register", data=payload)
         response = self.test_app.get("/auth/login", data=payload)
         data = json.loads(response.get_data(as_text=True))
@@ -172,7 +184,7 @@ class MyTest(TestCase):
 
     def test_get_bucketlist(self):
         """Tests getting a single bucketlist"""
-        payload = {'username': 'lederp', 'password': 'lederp', 'email': 'z@b.c'}
+        payload = {'username': 'lederp', 'password': 'lederp', 'email': 'lederp@gmail.com'}
         response = self.test_app.get("/auth/register", data=payload)
         response = self.test_app.get("/auth/login", data=payload)
         data = json.loads(response.get_data(as_text=True))
@@ -204,7 +216,7 @@ class MyTest(TestCase):
 
     def test_update_bucketlist(self):
         """Tests updating a bucketlist"""
-        payload = {'username': 'lederp', 'password': 'lederp', 'email': 'z@b.c'}
+        payload = {'username': 'lederp', 'password': 'lederp', 'email': 'lederp@gmail.com'}
         response = self.test_app.get("/auth/register", data=payload)
         response = self.test_app.get("/auth/login", data=payload)
         data = json.loads(response.get_data(as_text=True))
@@ -235,7 +247,7 @@ class MyTest(TestCase):
 
     def test_delete_bucketlist(self):
         """Tests deleting a bucketlist"""
-        payload = {'username': 'lederp', 'password': 'lederp', 'email': 'z@b.c'}
+        payload = {'username': 'lederp', 'password': 'lederp', 'email': 'lederp@gmail.com'}
         response = self.test_app.get("/auth/register", data=payload)
         response = self.test_app.get("/auth/login", data=payload)
         data = json.loads(response.get_data(as_text=True))
@@ -265,7 +277,7 @@ class MyTest(TestCase):
 
     def test_add_item(self):
         """Tests for adding an item to a bucketlist"""
-        payload = {'username': 'lederp', 'password': 'lederp', 'email': 'z@b.c'}
+        payload = {'username': 'lederp', 'password': 'lederp', 'email': 'lederp@gmail.com'}
         response = self.test_app.get("/auth/register", data=payload)
         response = self.test_app.get("/auth/login", data=payload)
         data = json.loads(response.get_data(as_text=True))
@@ -312,7 +324,7 @@ class MyTest(TestCase):
 
     def test_update_item(self):
         """Tests updating a bucketlist item"""
-        payload = {'username': 'lederp', 'password': 'lederp', 'email': 'z@b.c'}
+        payload = {'username': 'lederp', 'password': 'lederp', 'email': 'lederp@gmail.com'}
         response = self.test_app.get("/auth/register", data=payload)
         response = self.test_app.get("/auth/login", data=payload)
         data = json.loads(response.get_data(as_text=True))
@@ -351,7 +363,7 @@ class MyTest(TestCase):
 
     def test_delete_item(self):
         """Tests deleting a bucketlist item"""
-        payload = {'username': 'lederp', 'password': 'lederp', 'email': 'z@b.c'}
+        payload = {'username': 'lederp', 'password': 'lederp', 'email': 'lederp@gmail.com'}
         response = self.test_app.get("/auth/register", data=payload)
         response = self.test_app.get("/auth/login", data=payload)
         data = json.loads(response.get_data(as_text=True))

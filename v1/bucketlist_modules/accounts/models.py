@@ -8,7 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from itsdangerous import (TimedJSONWebSignatureSerializer
 						  as Serializer, BadSignature, SignatureExpired)
 from werkzeug.security import generate_password_hash, check_password_hash
-from bucketlist_modules.api.models import BucketList
+from v1.bucketlist_modules.api.models import BucketList
 from flask import Flask
 from app import db, app
 

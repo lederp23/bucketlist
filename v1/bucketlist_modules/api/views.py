@@ -4,8 +4,8 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0,parentdir)
 from flask import g
 from flask import jsonify, abort, request
-from bucketlist_modules.api.models import BucketList, Item
-from bucketlist_modules.accounts.views import requires_auth
+from v1.bucketlist_modules.api.models import BucketList, Item
+from v1.bucketlist_modules.accounts.views import requires_auth
 from config import ProductionConfig
 from flask_sqlalchemy import SQLAlchemy
 from flask.blueprints import Blueprint

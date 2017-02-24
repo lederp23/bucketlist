@@ -2,13 +2,15 @@ import os,sys,inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0,parentdir)
+import re
 from flask import g
 from functools import wraps
-from bucketlist_modules.accounts.models import User, verify_auth_token
+from v1.bucketlist_modules.accounts.models import User, verify_auth_token
 from config import ProductionConfig
 from flask_sqlalchemy import SQLAlchemy
 from flask.blueprints import Blueprint
 from flask import request, jsonify, abort
+from validate_email import validate_email
 from app import app, db
 
 accounts = Blueprint('accounts', __name__, template_folder='templates')
@@ -35,9 +37,13 @@ def register():
 	username = request.form['username']
 	password = request.form['password']
 	email = request.form['email']
-
+	is_valid = validate_email(email)
 	if username is '' or password is '':
 		abort(400)
+	if not is_valid:
+		return jsonify({'error': 'invalid email'})
+	if not re.match('^[a-zA-Z0-9-_]*$',username):
+		return jsonify({'error': 'username cannot have special characters'})
 	if db.session.query(User).filter_by(username=username).first() is not None:
 		return jsonify({'error': 'user already exists'})
 	user = User(username=username, email=email, password=password)
