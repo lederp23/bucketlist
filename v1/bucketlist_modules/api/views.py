@@ -2,6 +2,7 @@ import os,sys,inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0,parentdir)
+import datetime
 from flask import g
 from flask import jsonify, abort, request
 from v1.bucketlist_modules.api.models import BucketList, Item
@@ -97,6 +98,7 @@ def update_bucketlist(id):
 	items=[]
 	if bucket:
 		bucket.name = name
+		bucket.date_modified = datetime.datetime.now()
 		db.session.commit()
 		return jsonify({'result': True})
 	abort(404)
@@ -144,6 +146,7 @@ def update_item(id, item_id):
 	item = db.session.query(Item).filter(Item.id==item_id).first()
 	if item:
 		item.name = name
+		item.date_modified = datetime.datetime.now()
 		db.session.commit()
 		items.append({"id": item.id,\
 					  "name": item.name,\
