@@ -26,9 +26,11 @@ def get_bucketlists():
 	offset = int(request.args.get('offset') if request.args.get('offset') else 0)
 	start = (request.args.get('q') if request.args.get('q') else '')
 	if start:
-		bucket = db.session.query(BucketList).filter(BucketList.name.contains(start)).filter(BucketList.id>offset).limit(limit)
+		bucket = db.session.query(BucketList).filter(BucketList.name.\
+				 contains(start)).filter(BucketList.id>offset).limit(limit)
 	else:
-		bucket = db.session.query(BucketList).filter(BucketList.id>offset).limit(limit)
+		bucket = db.session.query(BucketList).filter(BucketList.id>offset).\
+				 limit(limit)
 	bucketlists = []
 	for bucketlist in bucket:
 		items = []
@@ -45,14 +47,17 @@ def get_bucketlists():
 						   "date_modified": bucketlist.date_modified,\
 						   "created_by": bucketlist.created_by})
 	if len(bucketlists) == limit:
-		next_url = '/bucketlist/api/v1.0/bucketlists/?q=' + start + '&limit=' + str(limit) + '&offset=' + str(offset + limit)
+		next_url = '/bucketlist/api/v1.0/bucketlists/?q=' + start + '&limit=' +\
+				   str(limit) + '&offset=' + str(offset + limit)
 	else:
 		next_url = ''
 	if offset >= limit:
-		previous_url = '/bucketlist/api/v1.0/bucketlists/?q=' + start + '&limit=' + str(limit) + '&offset=' + str(offset - limit)
+		previous_url = '/bucketlist/api/v1.0/bucketlists/?q=' + start +\
+					   '&limit=' + str(limit) + '&offset=' + str(offset - limit)
 	else:
 		previous_url = ''
-	return jsonify({"bucketlists": bucketlists, "next_url": next_url, "previous_url": previous_url})
+	return jsonify({"bucketlists": bucketlists, "next_url": next_url,\
+					"previous_url": previous_url})
 
 @api.route('/bucketlist/api/v1.0/bucketlists/<int:id>', methods=['GET'])
 @requires_auth
@@ -142,7 +147,8 @@ def add_item(id):
 				  "bucketlist_id": item.bucketlist_id})
 	return jsonify({'item': items[0]})
 
-@api.route('/bucketlist/api/v1.0/bucketlists/<int:id>/items/<int:item_id>', methods=['PUT'])
+@api.route('/bucketlist/api/v1.0/bucketlists/<int:id>/items/<int:item_id>',\
+		   methods=['PUT'])
 @requires_auth
 def update_item(id, item_id):
 	"""Updates a bucketlist item"""
@@ -164,7 +170,8 @@ def update_item(id, item_id):
 		return jsonify({'item': items[0]})
 	abort(404)
 
-@api.route('/bucketlist/api/v1.0/bucketlists/<int:id>/items/<int:item_id>', methods=['DELETE'])
+@api.route('/bucketlist/api/v1.0/bucketlists/<int:id>/items/<int:item_id>',\
+		   methods=['DELETE'])
 @requires_auth
 def delete_item(id,item_id):
 	"""Deletes a bucketlist item"""
