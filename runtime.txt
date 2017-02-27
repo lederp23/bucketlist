@@ -1,1 +1,1 @@
-python==3.5.3rc1
+python=3.5.3rc1
