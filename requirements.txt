@@ -15,7 +15,8 @@ Flask-RESTful==0.3.5
 Flask-Script==2.0.5
 Flask-Security==1.7.5
 Flask-SQLAlchemy==2.1
-get==0.0.0
+Flask-Testing==0.6.1
+Flask-WTF==0.14.2
 httplib2==0.10.3
 itsdangerous==0.24
 Jinja2==2.9.5
