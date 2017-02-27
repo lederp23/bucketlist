@@ -157,13 +157,21 @@ class MyTest(TestCase):
         data = json.loads(response.get_data(as_text=True))
         self.assertTrue(len(data['bucketlists']) == 0)
 
-        #asserts searching with correct name
+        #asserts searching with correct name, offest and limit
         headers={'token': token}
-        query = {'q': 'bucketlist'}
+        query = {'q': 'bucketlist', 'limit': 1, 'offset': 0}
         response = self.test_app.get("/bucketlist/api/v1.0/bucketlists/",\
                                      headers=headers, query_string=query)
         data = json.loads(response.get_data(as_text=True))
         self.assertTrue(len(data['bucketlists']) == 1)
+        headers={'token': token}
+
+        #asserts searching with correct name and limit and wrong offest
+        query = {'q': 'bucketlist', 'limit': 1, 'offset': 1}
+        response = self.test_app.get("/bucketlist/api/v1.0/bucketlists/",\
+                                     headers=headers, query_string=query)
+        data = json.loads(response.get_data(as_text=True))
+        self.assertTrue(len(data['bucketlists']) == 0)
 
         payload = {'name': 'bucketlist2'}
         response = self.test_app.post("/bucketlist/api/v1.0/bucketlists/",\

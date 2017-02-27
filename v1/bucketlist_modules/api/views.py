@@ -23,11 +23,12 @@ PER_PAGE = 20
 def get_bucketlists():
 	"""Returns all bucketlists"""
 	limit = int(request.args.get('limit') if request.args.get('limit') else PER_PAGE)
-	start = request.args.get('q')
+	offset = int(request.args.get('offset') if request.args.get('offset') else 0)
+	start = (request.args.get('q') if request.args.get('q') else '')
 	if start:
-		bucket = db.session.query(BucketList).filter(BucketList.name.contains(start)).all()
+		bucket = db.session.query(BucketList).filter(BucketList.name.contains(start)).filter(BucketList.id>offset).limit(limit)
 	else:
-		bucket = db.session.query(BucketList).all()
+		bucket = db.session.query(BucketList).filter(BucketList.id>offset).limit(limit)
 	bucketlists = []
 	for bucketlist in bucket:
 		items = []
@@ -43,8 +44,15 @@ def get_bucketlists():
 						   "date_created": bucketlist.date_created,\
 						   "date_modified": bucketlist.date_modified,\
 						   "created_by": bucketlist.created_by})
-	pagination = Pagination(page=1, total=len(bucketlists))
-	return jsonify({"bucketlists": bucketlists[:limit]})
+	if len(bucketlists) == limit:
+		next_url = '/bucketlist/api/v1.0/bucketlists/?q=' + start + '&limit=' + str(limit) + '&offset=' + str(offset + limit)
+	else:
+		next_url = ''
+	if offset >= limit:
+		previous_url = '/bucketlist/api/v1.0/bucketlists/?q=' + start + '&limit=' + str(limit) + '&offset=' + str(offset - limit)
+	else:
+		previous_url = ''
+	return jsonify({"bucketlists": bucketlists, "next_url": next_url, "previous_url": previous_url})
 
 @api.route('/bucketlist/api/v1.0/bucketlists/<int:id>', methods=['GET'])
 @requires_auth
