@@ -15,8 +15,8 @@ from app import db, app
 class User(db.Model):
     """Model for users"""
     __tablename__ = 'users'
-    id = db.Column(Integer, autoincrement=True)
-    username = db.Column(String, unique=True, primary_key=True)
+    id = db.Column(Integer, primary_key=True)
+    username = db.Column(String, unique=True)
     email = db.Column(String, unique=True)
     password = db.Column(String)
     bucketlists = db.relationship(BucketList, backref='users', lazy='dynamic')
