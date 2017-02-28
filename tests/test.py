@@ -328,8 +328,6 @@ class MyTest(TestCase):
         data = json.loads(response.get_data(as_text=True))
         self.assertEqual(data['bucketlists'][0]['items'][0]['name'], 'item1')
 
-
-
     def test_update_item(self):
         """Tests updating a bucketlist item"""
         payload = {'username': 'lederp', 'password': 'lederp', 'email': 'lederp@gmail.com'}
