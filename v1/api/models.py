@@ -16,7 +16,8 @@ class Item(db.Model):
     date_created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     date_modified = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     done = Column(db.Boolean, default=False)
-    bucketlist_id = db.Column(db.Integer, db.ForeignKey('bucketlists.id'), nullable=False)
+    bucketlist_id = db.Column(db.Integer, db.ForeignKey('bucketlists.id'),\
+                              nullable=False)
 
     def __init__(self, name, bucketlist):
         self.name = name

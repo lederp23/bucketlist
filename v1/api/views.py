@@ -24,7 +24,8 @@ PER_PAGE = 20
 def get_bucketlists(request):
 	"""Returns all bucketlists"""
 	if requires_auth(request):
-		limit = int(request.args.get('limit') if request.args.get('limit') else PER_PAGE)
+		limit = int(request.args.get('limit') if request.args.get('limit')\
+					else PER_PAGE)
 		offset = int(request.args.get('offset') if request.args.get('offset') else 0)
 		start = (request.args.get('q') if request.args.get('q') else '')
 		if start:
@@ -49,8 +50,8 @@ def get_bucketlists(request):
 							   "date_modified": bucketlist.date_modified,\
 							   "created_by": bucketlist.created_by})
 		if len(bucketlists) == limit:
-			next_url = '/bucketlist/api/<version>/bucketlists/?q=' + start + '&limit=' +\
-					   str(limit) + '&offset=' + str(offset + limit)
+			next_url = '/bucketlist/api/<version>/bucketlists/?q=' + start +\
+					   '&limit=' +str(limit) + '&offset=' + str(offset + limit)
 		else:
 			next_url = ''
 		if offset >= limit:

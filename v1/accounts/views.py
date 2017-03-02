@@ -26,7 +26,8 @@ def login(request):
 	else:
 		abort(401)
 	access_token = user.generate_token()
-	return jsonify({'result': authorized, 'access_token': access_token.decode('UTF-8')})
+	return jsonify({'result': authorized, \
+					'access_token': access_token.decode('UTF-8')})
 
 def register(request):
 	"""Registers a user"""
