@@ -4,7 +4,7 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0,parentdir)
 import re
 import importlib
-from flask import g, request
+from flask import g, request, abort
 from functools import wraps
 from config import ProductionConfig
 from flask_sqlalchemy import SQLAlchemy
@@ -68,10 +68,16 @@ def delete_bucketlist_item(version, id, item_id):
 
 def import_account_views(version):
     """Imports version of api"""
-    mod = importlib.import_module(version + ".accounts.views")
-    return mod
+    try:
+        mod = importlib.import_module(version + ".accounts.views")
+        return mod
+    except ImportError:
+        abort(404)
 
 def import_api_views(version):
     """Imports version of api"""
-    mod = importlib.import_module(version + ".api.views")
-    return mod
+    try:
+        mod = importlib.import_module(version + ".api.views")
+        return mod
+    except ImportError:
+        abort(404)
