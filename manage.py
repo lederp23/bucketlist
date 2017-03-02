@@ -7,15 +7,14 @@ from v1.api.models import BucketList, Item
 from v1.accounts.models import User
 from config import ProductionConfig
 from v1.accounts.views import accounts
-from v1.api.views import api
+from urls import urls
 
 app = Flask(__name__)
 db = SQLAlchemy(app)
 
 migrate = Migrate(app, db)
 app.config.from_object(ProductionConfig())
-app.register_blueprint(api)
-app.register_blueprint(accounts)
+app.register_blueprint(urls)
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)
 

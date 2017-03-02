@@ -13,10 +13,7 @@ from flask import request, jsonify, abort
 from validate_email import validate_email
 from app import app, db
 
-accounts = Blueprint('accounts', __name__, template_folder='templates')
-
-@accounts.route('/auth/login', methods=['GET', 'POST'])
-def login():
+def login(request):
 	"""Logs a user in"""
 	authorized = False
 	username = request.form['username']
@@ -31,8 +28,7 @@ def login():
 	access_token = user.generate_token()
 	return jsonify({'result': authorized, 'access_token': access_token.decode('UTF-8')})
 
-@accounts.route('/auth/register', methods=['GET', 'POST'])
-def register():
+def register(request):
 	"""Registers a user"""
 	username = request.form['username']
 	password = request.form['password']
@@ -52,19 +48,16 @@ def register():
 	db.session.commit()
 	return jsonify({ 'username': user.username })
 
-def requires_auth(f):
+def requires_auth(request):
 	"""Ensures a user is authenticated before accessing data"""
-	@wraps(f)
-	def decorated(*args, **kwargs):
-		auth = ''
-		try:
-			auth = request.headers['Token']
-		except KeyError:
-			pass
-		if not auth:
-			abort(401)
-		user = verify_auth_token(auth)
-		if user is None:
-			abort(401)
-		return f(*args, **kwargs)
-	return decorated
+	auth = ''
+	try:
+		auth = request.headers['Token']
+	except KeyError:
+		pass
+	if not auth:
+		abort(401)
+	user = verify_auth_token(auth)
+	if user is None:
+		abort(401)
+	return True

@@ -8,16 +8,14 @@ from flask_sqlalchemy import SQLAlchemy
 from app import app, db
 from v1.accounts.models import User
 from v1.api.models import BucketList, Item
-from v1.accounts.views import accounts
-from v1.api.views import api
+from urls import urls
 import json
 
 class MyTest(TestCase):
 
     def setUp(self):
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-        app.register_blueprint(api)
-        app.register_blueprint(accounts)
+        app.register_blueprint(urls)
         db.create_all()
         self.test_app = app.test_client()
 
@@ -25,66 +23,66 @@ class MyTest(TestCase):
         """Tests for user registration"""
         #asserts status code 400 if username or password is blank
         payload = {'username': '', 'password': '', 'email': ''}
-        response = self.test_app.get("/auth/register", data=payload)
+        response = self.test_app.get("/api/v1/auth/register", data=payload)
         self.assertEqual(response.status_code, 400)
 
         #asserts error if email is invalid
         payload = {'username': 'lederp', 'password': 'lederp', 'email': 'email'}
-        response = self.test_app.get("/auth/register", data=payload)
+        response = self.test_app.get("/api/v1/auth/register", data=payload)
         data = json.loads(response.get_data(as_text=True))
         self.assertEqual(data['error'], 'invalid email')
 
         #asserts error if username is invalid
         payload = {'username': 'lederp*#', 'password': 'lederp', 'email': 'lederp@gmail.com'}
-        response = self.test_app.get("/auth/register", data=payload)
+        response = self.test_app.get("/api/v1/auth/register", data=payload)
         data = json.loads(response.get_data(as_text=True))
         self.assertEqual(data['error'], 'username cannot have special characters')
 
         #asserts status code 400 if username or password is not sent in request
-        response = self.test_app.get("/auth/register")
+        response = self.test_app.get("/api/v1/auth/register")
         self.assertEqual(response.status_code, 400)
 
         #asserts that the user has been registered
         payload = {'username': 'lederp', 'password': 'lederp', 'email': 'lederp@gmail.com'}
-        response = self.test_app.get("/auth/register", data=payload)
+        response = self.test_app.get("/api/v1/auth/register", data=payload)
         self.assertEqual(response.status_code, 200)
 
         #asserts that the user already exists
         payload = {'username': 'lederp', 'password': 'lederp', 'email': 'lederp@gmail.com'}
-        response = self.test_app.get("/auth/register", data=payload)
+        response = self.test_app.get("/api/v1/auth/register", data=payload)
         data = json.loads(response.get_data(as_text=True))
         self.assertEqual(data['error'], 'user already exists')
 
     def test_login(self):
         """Tests for login"""
         payload = {'username': 'lederp', 'password': 'lederp', 'email': 'lederp@gmail.com'}
-        response = self.test_app.get("/auth/register", data=payload)
+        response = self.test_app.get("/api/v1/auth/register", data=payload)
 
         #asserts status code 400 if form data is not sent in request
-        response = self.test_app.get("/auth/login")
+        response = self.test_app.get("/api/v1/auth/login")
         self.assertEqual(response.status_code, 400)
 
         #asserts that the request is successful
-        response = self.test_app.get("/auth/login", data=payload)
+        response = self.test_app.get("/api/v1/auth/login", data=payload)
         data = json.loads(response.get_data(as_text=True))
         self.assertTrue(data['result'])
         self.assertEqual(response.status_code, 200)
 
         #asserts user is not authorized with wrong password
         payload = {'username': 'lederp', 'password': 'leder', 'email': 'lederp@gmail.com'}
-        response = self.test_app.get("/auth/login", data=payload)
+        response = self.test_app.get("/api/v1/auth/login", data=payload)
         self.assertEqual(response.status_code, 401)
 
         #asserts that a non-existant user cannot login
         payload = {'username': 'oliver', 'password': 'leder', 'email': 'lederp@gmail.com'}
-        response = self.test_app.get("/auth/login", data=payload)
+        response = self.test_app.get("/api/v1/auth/login", data=payload)
         self.assertEqual(response.status_code, 404)
 
     def test_add_bucketlist(self):
         """Tests for adding a bucketlist"""
         payload = {'username': 'lederp', 'password': 'lederp', 'email': 'lederp@gmail.com'}
-        response = self.test_app.get("/auth/register", data=payload)
-        response = self.test_app.get("/auth/login", data=payload)
+        response = self.test_app.get("/api/v1/auth/register", data=payload)
+        response = self.test_app.get("/api/v1/auth/login", data=payload)
         data = json.loads(response.get_data(as_text=True))
 
         #asserts a user is authorized
@@ -95,48 +93,48 @@ class MyTest(TestCase):
         payload = {'name': 'bucketlist1'}
 
         #asserts that a bucketlist has been added
-        response = self.test_app.post("/bucketlist/api/v1.0/bucketlists/",\
+        response = self.test_app.post("/api/v1/bucketlists/",\
                                       headers=headers, data=payload)
         data = json.loads(response.get_data(as_text=True))
         self.assertEqual(data['bucketlist']['name'], 'bucketlist1')
 
         #asserts bad request if name of bucketlist is not provided
-        response = self.test_app.post("/bucketlist/api/v1.0/bucketlists/",\
+        response = self.test_app.post("/api/v1/bucketlists/",\
                                       headers=headers)
         self.assertEqual(response.status_code, 400)
 
         #asserts a user cannot add a bucketlist with wrong token
         headers={'token': 'wrong token'}
-        response = self.test_app.post("/bucketlist/api/v1.0/bucketlists/",\
+        response = self.test_app.post("/api/v1/bucketlists/",\
                                       headers=headers, data=payload)
         self.assertEqual(response.status_code, 401)
 
         #asserts a user cannot add a bucketlist without token
         headers={'token': 'wrong token'}
-        response = self.test_app.post("/bucketlist/api/v1.0/bucketlists/",\
+        response = self.test_app.post("/api/v1/bucketlists/",\
                                       data=payload)
         self.assertEqual(response.status_code, 401)
 
         #asserts a user cannot add a bucketlist with expired token
         time.sleep(3)
         headers={'token': token}
-        response = self.test_app.post("/bucketlist/api/v1.0/bucketlists/",\
+        response = self.test_app.post("/api/v1/bucketlists/",\
                                       headers=headers, data=payload)
         self.assertEqual(response.status_code, 401)
 
     def test_get_bucketlists(self):
         """Tests for getting bucketlists"""
         payload = {'username': 'lederp', 'password': 'lederp', 'email': 'lederp@gmail.com'}
-        response = self.test_app.get("/auth/register", data=payload)
-        response = self.test_app.get("/auth/login", data=payload)
+        response = self.test_app.get("/api/v1/auth/register", data=payload)
+        response = self.test_app.get("/api/v1/auth/login", data=payload)
         data = json.loads(response.get_data(as_text=True))
         token = data['access_token']
         headers={'token': token}
         payload = {'name': 'bucketlist1'}
 
-        response = self.test_app.post("/bucketlist/api/v1.0/bucketlists/",\
+        response = self.test_app.post("/api/v1/bucketlists/",\
                                       headers=headers, data=payload)
-        response = self.test_app.get("/bucketlist/api/v1.0/bucketlists/",\
+        response = self.test_app.get("/api/v1/bucketlists/",\
                                      headers=headers)
         data = json.loads(response.get_data(as_text=True))
 
@@ -145,14 +143,14 @@ class MyTest(TestCase):
 
         #asserts a user cannot get bucketlists with wrong token
         headers={'token': 'wrong token'}
-        response = self.test_app.get("/bucketlist/api/v1.0/bucketlists/",\
+        response = self.test_app.get("/api/v1/bucketlists/",\
                                      headers=headers)
         self.assertEqual(response.status_code, 401)
 
         #asserts searching with wrong name
         headers={'token': token}
         query = {'q': 'reefef'}
-        response = self.test_app.get("/bucketlist/api/v1.0/bucketlists/",\
+        response = self.test_app.get("/api/v1/bucketlists/",\
                                      headers=headers, query_string=query)
         data = json.loads(response.get_data(as_text=True))
         self.assertTrue(len(data['bucketlists']) == 0)
@@ -160,7 +158,7 @@ class MyTest(TestCase):
         #asserts searching with correct name, offest and limit
         headers={'token': token}
         query = {'q': 'bucketlist', 'limit': 1, 'offset': 0}
-        response = self.test_app.get("/bucketlist/api/v1.0/bucketlists/",\
+        response = self.test_app.get("/api/v1/bucketlists/",\
                                      headers=headers, query_string=query)
         data = json.loads(response.get_data(as_text=True))
         self.assertTrue(len(data['bucketlists']) == 1)
@@ -168,24 +166,24 @@ class MyTest(TestCase):
 
         #asserts searching with correct name and limit and wrong offest
         query = {'q': 'bucketlist', 'limit': 1, 'offset': 1}
-        response = self.test_app.get("/bucketlist/api/v1.0/bucketlists/",\
+        response = self.test_app.get("/api/v1/bucketlists/",\
                                      headers=headers, query_string=query)
         data = json.loads(response.get_data(as_text=True))
         self.assertTrue(len(data['bucketlists']) == 0)
 
         payload = {'name': 'bucketlist2'}
-        response = self.test_app.post("/bucketlist/api/v1.0/bucketlists/",\
+        response = self.test_app.post("/api/v1/bucketlists/",\
                                       headers=headers, data=payload)
 
         #asserts limiting number of bucketlists
         query = {'limit': 1}
-        response = self.test_app.get("/bucketlist/api/v1.0/bucketlists/",\
+        response = self.test_app.get("/api/v1/bucketlists/",\
                                      headers=headers, query_string=query)
         data = json.loads(response.get_data(as_text=True))
         self.assertTrue(len(data['bucketlists']) == 1)
 
         query = {'limit': 2}
-        response = self.test_app.get("/bucketlist/api/v1.0/bucketlists/",\
+        response = self.test_app.get("/api/v1/bucketlists/",\
                                      headers=headers, query_string=query)
         data = json.loads(response.get_data(as_text=True))
         self.assertTrue(len(data['bucketlists']) == 2)
@@ -193,16 +191,16 @@ class MyTest(TestCase):
     def test_get_bucketlist(self):
         """Tests getting a single bucketlist"""
         payload = {'username': 'lederp', 'password': 'lederp', 'email': 'lederp@gmail.com'}
-        response = self.test_app.get("/auth/register", data=payload)
-        response = self.test_app.get("/auth/login", data=payload)
+        response = self.test_app.get("/api/v1/auth/register", data=payload)
+        response = self.test_app.get("/api/v1/auth/login", data=payload)
         data = json.loads(response.get_data(as_text=True))
         token = data['access_token']
         headers={'token': token}
         payload = {'name': 'bucketlist1'}
 
-        response = self.test_app.post("/bucketlist/api/v1.0/bucketlists/",\
+        response = self.test_app.post("/api/v1/bucketlists/",\
                                       headers=headers, data=payload)
-        response = self.test_app.get("/bucketlist/api/v1.0/bucketlists/1",\
+        response = self.test_app.get("/api/v1/bucketlists/1",\
                                      headers=headers)
         data = json.loads(response.get_data(as_text=True))
 
@@ -211,13 +209,13 @@ class MyTest(TestCase):
 
         #asserts a user cannot get a bucketlist with wrong token
         headers={'token': 'wrong token'}
-        response = self.test_app.get("/bucketlist/api/v1.0/bucketlists/1",\
+        response = self.test_app.get("/api/v1/bucketlists/1",\
                                      headers=headers)
         self.assertEqual(response.status_code, 401)
 
         #asserts status_code 404 if bucketlist is not found
         headers={'token': token}
-        response = self.test_app.get("/bucketlist/api/v1.0/bucketlists/4",\
+        response = self.test_app.get("/api/v1/bucketlists/4",\
                                      headers=headers)
         self.assertEqual(response.status_code, 404)
 
@@ -225,16 +223,16 @@ class MyTest(TestCase):
     def test_update_bucketlist(self):
         """Tests updating a bucketlist"""
         payload = {'username': 'lederp', 'password': 'lederp', 'email': 'lederp@gmail.com'}
-        response = self.test_app.get("/auth/register", data=payload)
-        response = self.test_app.get("/auth/login", data=payload)
+        response = self.test_app.get("/api/v1/auth/register", data=payload)
+        response = self.test_app.get("/api/v1/auth/login", data=payload)
         data = json.loads(response.get_data(as_text=True))
         token = data['access_token']
         headers={'token': token}
         payload = {'name': 'bucketlist1'}
-        response = self.test_app.post("/bucketlist/api/v1.0/bucketlists/",\
+        response = self.test_app.post("/api/v1/bucketlists/",\
                                       headers=headers, data=payload)
         payload = {'name': 'bucketlist2'}
-        response = self.test_app.put("/bucketlist/api/v1.0/bucketlists/1",\
+        response = self.test_app.put("/api/v1/bucketlists/1",\
                                      headers=headers, data=payload)
         data = json.loads(response.get_data(as_text=True))
 
@@ -243,28 +241,28 @@ class MyTest(TestCase):
 
         #asserts a user cannot update bucketlist with wrong token
         headers={'token': 'wrong token'}
-        response = self.test_app.put("/bucketlist/api/v1.0/bucketlists/1",\
+        response = self.test_app.put("/api/v1/bucketlists/1",\
                                      headers=headers)
         self.assertEqual(response.status_code, 401)
 
         #asserts status_code 404 if bucketlist is not found
         headers={'token': token}
-        response = self.test_app.put("/bucketlist/api/v1.0/bucketlists/6",\
+        response = self.test_app.put("/api/v1/bucketlists/6",\
                                      headers=headers, data=payload)
         self.assertEqual(response.status_code, 404)
 
     def test_delete_bucketlist(self):
         """Tests deleting a bucketlist"""
         payload = {'username': 'lederp', 'password': 'lederp', 'email': 'lederp@gmail.com'}
-        response = self.test_app.get("/auth/register", data=payload)
-        response = self.test_app.get("/auth/login", data=payload)
+        response = self.test_app.get("/api/v1/auth/register", data=payload)
+        response = self.test_app.get("/api/v1/auth/login", data=payload)
         data = json.loads(response.get_data(as_text=True))
         token = data['access_token']
         headers={'token': token}
         payload = {'name': 'bucketlist1'}
-        response = self.test_app.post("/bucketlist/api/v1.0/bucketlists/",\
+        response = self.test_app.post("/api/v1/bucketlists/",\
                                       headers=headers, data=payload)
-        response = self.test_app.delete("/bucketlist/api/v1.0/bucketlists/1",\
+        response = self.test_app.delete("/api/v1/bucketlists/1",\
                                         headers=headers)
         data = json.loads(response.get_data(as_text=True))
 
@@ -273,28 +271,28 @@ class MyTest(TestCase):
 
         #asserts a user cannot delete bucketlist with wrong token
         headers={'token': 'wrong token'}
-        response = self.test_app.delete("/bucketlist/api/v1.0/bucketlists/1",\
+        response = self.test_app.delete("/api/v1/bucketlists/1",\
                                         headers=headers)
         self.assertEqual(response.status_code, 401)
 
         #asserts status_code 404 if bucketlist is not found
         headers={'token': token}
-        response = self.test_app.delete("/bucketlist/api/v1.0/bucketlists/6",\
+        response = self.test_app.delete("/api/v1/bucketlists/6",\
                                         headers=headers)
         self.assertEqual(response.status_code, 404)
 
     def test_add_item(self):
         """Tests for adding an item to a bucketlist"""
         payload = {'username': 'lederp', 'password': 'lederp', 'email': 'lederp@gmail.com'}
-        response = self.test_app.get("/auth/register", data=payload)
-        response = self.test_app.get("/auth/login", data=payload)
+        response = self.test_app.get("/api/v1/auth/register", data=payload)
+        response = self.test_app.get("/api/v1/auth/login", data=payload)
         data = json.loads(response.get_data(as_text=True))
         token = data['access_token']
         headers={'token': token}
         payload = {'name': 'item1'}
-        response = self.test_app.post("/bucketlist/api/v1.0/bucketlists/",\
+        response = self.test_app.post("/api/v1/bucketlists/",\
                                       headers=headers, data=payload)
-        response = self.test_app.post("/bucketlist/api/v1.0/bucketlists/1/items/",\
+        response = self.test_app.post("/api/v1/bucketlists/1/items/",\
                                       headers=headers, data=payload)
         data = json.loads(response.get_data(as_text=True))
 
@@ -302,28 +300,28 @@ class MyTest(TestCase):
         self.assertEqual(data['item']['name'], 'item1')
 
         #asserts bad request if name of item is not provided
-        response = self.test_app.post("/bucketlist/api/v1.0/bucketlists/1/items/",\
+        response = self.test_app.post("/api/v1/bucketlists/1/items/",\
                                       headers=headers)
         self.assertEqual(response.status_code, 400)
 
         #asserts a user cannot add an item with wrong token
         headers={'token': 'wrong token'}
-        response = self.test_app.post("/bucketlist/api/v1.0/bucketlists/1/items/",\
+        response = self.test_app.post("/api/v1/bucketlists/1/items/",\
                                       headers=headers, data=payload)
         self.assertEqual(response.status_code, 401)
 
         #asserts a user cannot add an item with bucketlist id
         headers={'token': token}
-        response = self.test_app.post("/bucketlist/api/v1.0/bucketlists/5/items/",\
+        response = self.test_app.post("/api/v1/bucketlists/5/items/",\
                                       headers=headers, data=payload)
         self.assertEqual(response.status_code, 404)
 
         #asserts the item is assocaited with that bucketlist
-        response = self.test_app.get("/bucketlist/api/v1.0/bucketlists/1",\
+        response = self.test_app.get("/api/v1/bucketlists/1",\
                                      headers=headers)
         data = json.loads(response.get_data(as_text=True))
         self.assertEqual(data['bucketlist']['items'][0]['name'], 'item1')
-        response = self.test_app.get("/bucketlist/api/v1.0/bucketlists/",\
+        response = self.test_app.get("/api/v1/bucketlists/",\
                                      headers=headers)
         data = json.loads(response.get_data(as_text=True))
         self.assertEqual(data['bucketlists'][0]['items'][0]['name'], 'item1')
@@ -331,19 +329,19 @@ class MyTest(TestCase):
     def test_update_item(self):
         """Tests updating a bucketlist item"""
         payload = {'username': 'lederp', 'password': 'lederp', 'email': 'lederp@gmail.com'}
-        response = self.test_app.get("/auth/register", data=payload)
-        response = self.test_app.get("/auth/login", data=payload)
+        response = self.test_app.get("/api/v1/auth/register", data=payload)
+        response = self.test_app.get("/api/v1/auth/login", data=payload)
         data = json.loads(response.get_data(as_text=True))
         token = data['access_token']
         headers={'token': token}
         payload = {'name': 'bucketlist1'}
-        response = self.test_app.post("/bucketlist/api/v1.0/bucketlists/",\
+        response = self.test_app.post("/api/v1/bucketlists/",\
                                       headers=headers, data=payload)
         payload = {'name': 'item1'}
-        response = self.test_app.post("/bucketlist/api/v1.0/bucketlists/1/items/",\
+        response = self.test_app.post("/api/v1/bucketlists/1/items/",\
                                       headers=headers, data=payload)
         payload = {'name': 'item2'}
-        response = self.test_app.put("/bucketlist/api/v1.0/bucketlists/1/items/1",\
+        response = self.test_app.put("/api/v1/bucketlists/1/items/1",\
                                      headers=headers, data=payload)
         data = json.loads(response.get_data(as_text=True))
 
@@ -352,36 +350,36 @@ class MyTest(TestCase):
 
         #asserts a user cannot update bucketlist with wrong token
         headers={'token': 'wrong token'}
-        response = self.test_app.put("/bucketlist/api/v1.0/bucketlists/1/items/1",\
+        response = self.test_app.put("/api/v1/bucketlists/1/items/1",\
                                      headers=headers)
         self.assertEqual(response.status_code, 401)
 
         #asserts status_code 404 if bucketlist is not found
         headers={'token': token}
-        response = self.test_app.put("/bucketlist/api/v1.0/bucketlists/6/items/1",\
+        response = self.test_app.put("/api/v1/bucketlists/6/items/1",\
                                      headers=headers, data=payload)
         self.assertEqual(response.status_code, 404)
 
         #asserts status_code 404 if item is not found
-        response = self.test_app.put("/bucketlist/api/v1.0/bucketlists/1/items/6",\
+        response = self.test_app.put("/api/v1/bucketlists/1/items/6",\
                                      headers=headers, data=payload)
         self.assertEqual(response.status_code, 404)
 
     def test_delete_item(self):
         """Tests deleting a bucketlist item"""
         payload = {'username': 'lederp', 'password': 'lederp', 'email': 'lederp@gmail.com'}
-        response = self.test_app.get("/auth/register", data=payload)
-        response = self.test_app.get("/auth/login", data=payload)
+        response = self.test_app.get("/api/v1/auth/register", data=payload)
+        response = self.test_app.get("/api/v1/auth/login", data=payload)
         data = json.loads(response.get_data(as_text=True))
         token = data['access_token']
         headers={'token': token}
         payload = {'name': 'bucketlist1'}
-        response = self.test_app.post("/bucketlist/api/v1.0/bucketlists/",\
+        response = self.test_app.post("/api/v1/bucketlists/",\
                                       headers=headers, data=payload)
         payload = {'name': 'item1'}
-        response = self.test_app.post("/bucketlist/api/v1.0/bucketlists/1/items/",\
+        response = self.test_app.post("/api/v1/bucketlists/1/items/",\
                                       headers=headers, data=payload)
-        response = self.test_app.delete("/bucketlist/api/v1.0/bucketlists/1/items/1",\
+        response = self.test_app.delete("/api/v1/bucketlists/1/items/1",\
                                         headers=headers)
         data = json.loads(response.get_data(as_text=True))
 
@@ -390,20 +388,20 @@ class MyTest(TestCase):
 
         #asserts a user cannot delete bucketlist with wrong token
         headers={'token': 'wrong token'}
-        response = self.test_app.delete("/bucketlist/api/v1.0/bucketlists/1/items/1",\
+        response = self.test_app.delete("/api/v1/bucketlists/1/items/1",\
                                         headers=headers)
         self.assertEqual(response.status_code, 401)
 
         #asserts status_code 404 if bucketlist is not found
         headers={'token': token}
-        response = self.test_app.delete("/bucketlist/api/v1.0/bucketlists/6/items/1",\
+        response = self.test_app.delete("/api/v1/bucketlists/6/items/1",\
                                         headers=headers, data=payload)
         self.assertEqual(response.status_code, 404)
 
         #asserts status_code 404 if item is not found
-        response = self.test_app.delete("/bucketlist/api/v1.0/bucketlists/1/items/6",\
+        response = self.test_app.delete("/api/v1/bucketlists/1/items/6",\
                                         headers=headers, data=payload)
         self.assertEqual(response.status_code, 404)
 
     def tearDown(self):
-        os.remove('database/test.db')
+        os.remove('test.db')
