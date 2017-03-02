@@ -61,8 +61,6 @@ def get_bucketlists(request):
 			previous_url = ''
 		return jsonify({"bucketlists": bucketlists, "next_url": next_url,\
 						"previous_url": previous_url})
-	else:
-		abort(401)
 
 def get_bucketlist(requset, id):
 	"""Returns a bucketlist using ID"""
@@ -86,8 +84,6 @@ def get_bucketlist(requset, id):
 		else:
 			abort(404)
 		return jsonify({"bucketlist": bucketlist[0]})
-	else:
-		abort(401)
 
 def add_bucketlist(request):
 	"""Creates new bucketlist"""
@@ -105,8 +101,6 @@ def add_bucketlist(request):
 						   "date_modified": bucket.date_modified,\
 						   "created_by": bucket.created_by})
 		return jsonify({'bucketlist': bucketlist[0]})
-	else:
-		abort(401)
 
 def update_bucketlist(request, id):
 	"""Updates a bucketlist"""
@@ -121,8 +115,6 @@ def update_bucketlist(request, id):
 			db.session.commit()
 			return jsonify({'result': True})
 		abort(404)
-	else:
-		abort(401)
 
 def delete_bucketlist(request, id):
 	"""Deletes a bucketlist"""
@@ -133,8 +125,6 @@ def delete_bucketlist(request, id):
 			db.session.commit()
 			return jsonify({'result': True})
 		abort(404)
-	else:
-		abort(401)
 
 def add_item(request, id):
 	"""Creates new bucketlist item"""
@@ -154,8 +144,6 @@ def add_item(request, id):
 					  "done": item.done,
 					  "bucketlist_id": item.bucketlist_id})
 		return jsonify({'item': items[0]})
-	else:
-		abort(401)
 
 def update_item(request, id, item_id):
 	"""Updates a bucketlist item"""
@@ -177,8 +165,6 @@ def update_item(request, id, item_id):
 						  "done": item.done})
 			return jsonify({'item': items[0]})
 		abort(404)
-	else:
-		abort(401)
 
 def delete_item(request, id,item_id):
 	"""Deletes a bucketlist item"""
@@ -189,5 +175,3 @@ def delete_item(request, id,item_id):
 			db.session.commit()
 			return jsonify({'result': True})
 		abort(404)
-	else:
-		abort(401)

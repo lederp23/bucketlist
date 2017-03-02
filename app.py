@@ -1,7 +1,6 @@
 from flask import Flask, render_template, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_httpauth import HTTPBasicAuth
 from config import ProductionConfig
 
 app = Flask(__name__)

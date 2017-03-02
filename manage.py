@@ -1,12 +1,11 @@
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
-from flask import Flask, render_template, url_for
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
 from v1.api.models import BucketList, Item
 from v1.accounts.models import User
 from config import ProductionConfig
-from v1.accounts.views import accounts
 from urls import urls
 
 app = Flask(__name__)
