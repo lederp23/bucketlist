@@ -6,16 +6,16 @@ sys.path.insert(0,parentdir)
 from unittest import TestCase
 from flask_sqlalchemy import SQLAlchemy
 from app import app, db
-from v1.bucketlist_modules.accounts.models import User
-from v1.bucketlist_modules.api.models import BucketList, Item
-from v1.bucketlist_modules.accounts.views import accounts
-from v1.bucketlist_modules.api.views import api
+from v1.accounts.models import User
+from v1.api.models import BucketList, Item
+from v1.accounts.views import accounts
+from v1.api.views import api
 import json
 
 class MyTest(TestCase):
 
     def setUp(self):
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database/test.db'
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
         app.register_blueprint(api)
         app.register_blueprint(accounts)
         db.create_all()
