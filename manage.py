@@ -3,11 +3,11 @@ from flask_migrate import Migrate, MigrateCommand
 from flask import Flask, render_template, url_for
 from flask_sqlalchemy import SQLAlchemy
 
-from v1.bucketlist_modules.api.models import BucketList, Item
-from v1.bucketlist_modules.accounts.models import User
+from v1.api.models import BucketList, Item
+from v1.accounts.models import User
 from config import ProductionConfig
-from v1.bucketlist_modules.accounts.views import accounts
-from v1.bucketlist_modules.api.views import api
+from v1.accounts.views import accounts
+from v1.api.views import api
 
 app = Flask(__name__)
 db = SQLAlchemy(app)

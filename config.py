@@ -7,7 +7,7 @@ class Config(object):
 
 class ProductionConfig(Config):
 	DEBUG = False
-	SQLALCHEMY_DATABASE_URI = 'sqlite:///database/bucketlist.db'
+	SQLALCHEMY_DATABASE_URI = 'sqlite:///bucketlist.db'
 
 class DevelopmentConfig(Config):
 	TESTING = True
