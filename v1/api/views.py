@@ -21,7 +21,7 @@ api_models = None
 
 PER_PAGE = 20
 
-def get_bucketlists(request):
+def get_bucketlists(request, version):
 	"""Returns all bucketlists"""
 	if requires_auth(request):
 		limit = int(request.args.get('limit') if request.args.get('limit')\
@@ -50,12 +50,12 @@ def get_bucketlists(request):
 							   "date_modified": bucketlist.date_modified,\
 							   "created_by": bucketlist.created_by})
 		if len(bucketlists) == limit:
-			next_url = '/bucketlist/api/<version>/bucketlists/?q=' + start +\
+			next_url = '/api/' + version + '/bucketlists/?q=' + start +\
 					   '&limit=' +str(limit) + '&offset=' + str(offset + limit)
 		else:
 			next_url = ''
 		if offset >= limit:
-			previous_url = '/bucketlist/api/<version>/bucketlists/?q=' + start +\
+			previous_url = '/api/' + version + '/bucketlists/?q=' + start +\
 						   '&limit=' + str(limit) + '&offset=' + str(offset - limit)
 		else:
 			previous_url = ''

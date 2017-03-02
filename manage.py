@@ -11,6 +11,9 @@ from urls import urls
 app = Flask(__name__)
 db = SQLAlchemy(app)
 
+from v1.api.models import BucketList, Item
+from v1.accounts.models import User
+
 migrate = Migrate(app, db)
 app.config.from_object(ProductionConfig())
 app.register_blueprint(urls)

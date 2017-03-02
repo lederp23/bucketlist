@@ -27,7 +27,7 @@ def register_user(version):
 @urls.route('/api/<version>/bucketlists/', methods=['GET'])
 def get_bucket_lists(version):
 	api_views = import_api_views(version)
-	return api_views.get_bucketlists(request)
+	return api_views.get_bucketlists(request, version)
 
 @urls.route('/api/<version>/bucketlists/<int:id>', methods=['GET'])
 def get_bucket_list(version, id):
