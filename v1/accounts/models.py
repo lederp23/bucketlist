@@ -1,7 +1,9 @@
-import os,sys,inspect
+import os
+import sys
+import inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
-sys.path.insert(0,parentdir)
+sys.path.insert(0, parentdir)
 from flask import g
 from sqlalchemy import Column, Integer, String
 from flask_sqlalchemy import SQLAlchemy
@@ -11,6 +13,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from v1.api.models import BucketList
 from flask import Flask
 from app import db, app
+
 
 class User(db.Model):
     """Model for users"""
@@ -34,10 +37,11 @@ class User(db.Model):
         """Verifies provided password"""
         return check_password_hash(self.password, current_password)
 
-    def generate_token(self, expiration = 600):
+    def generate_token(self, expiration=600):
         """Generates authorization token for a user"""
-        serializer = Serializer(app.config['SECRET_KEY'], expires_in = expiration)
-        return serializer.dumps({ 'id': self.id})
+        serializer = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
+        return serializer.dumps({'id': self.id})
+
 
 def verify_auth_token(token):
     """Verifies provided authorization token"""

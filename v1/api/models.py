@@ -1,11 +1,14 @@
-import os,sys,inspect
+import os
+import sys
+import inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
-sys.path.insert(0,parentdir)
+sys.path.insert(0, parentdir)
 import datetime
 from sqlalchemy import Column, Integer, String, DateTime, Boolean
 from flask_sqlalchemy import SQLAlchemy
 from app import db
+
 
 class Item(db.Model):
     """Model for bucketlist items"""
@@ -16,12 +19,13 @@ class Item(db.Model):
     date_created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     date_modified = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     done = Column(db.Boolean, default=False)
-    bucketlist_id = db.Column(db.Integer, db.ForeignKey('bucketlists.id'),\
+    bucketlist_id = db.Column(db.Integer, db.ForeignKey('bucketlists.id'),
                               nullable=False)
 
     def __init__(self, name, bucketlist):
         self.name = name
         self.bucketlist_id = bucketlist
+
 
 class BucketList(db.Model):
     """Model for bucketlists"""
