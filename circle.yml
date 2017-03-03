@@ -1,0 +1,11 @@
+machine:
+  python:
+    version: 3.5.0
+
+dependencies:
+  pre:
+    - pip install -r requirements.txt
+
+test:
+  pre:
+    - py.test --cov-report term-missing --cov=v1 tests/test.py
