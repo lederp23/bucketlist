@@ -7,17 +7,10 @@ from flask import g
 from flask import jsonify, abort, request
 from v1.accounts.views import requires_auth
 from v1.api.models import Item, BucketList
-from config import ProductionConfig
 from flask_sqlalchemy import SQLAlchemy
-from flask.blueprints import Blueprint
 from flask import request, jsonify, abort
 from flask_paginate import Pagination
 from app import db
-
-api = Blueprint('api', __name__, template_folder='templates')
-
-account_views = None
-api_models = None
 
 PER_PAGE = 20
 

@@ -2,15 +2,10 @@ import os,sys,inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0,parentdir)
-import re
 import importlib
-from flask import g, request, abort
-from functools import wraps
-from config import ProductionConfig
+from flask import request, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask.blueprints import Blueprint
-from validate_email import validate_email
-from app import app, db
 
 urls = Blueprint('urls', __name__, template_folder='templates')
 

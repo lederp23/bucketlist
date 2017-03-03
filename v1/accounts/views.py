@@ -4,11 +4,8 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0,parentdir)
 import re
 from flask import g
-from functools import wraps
 from v1.accounts.models import User, verify_auth_token
-from config import ProductionConfig
 from flask_sqlalchemy import SQLAlchemy
-from flask.blueprints import Blueprint
 from flask import request, jsonify, abort
 from validate_email import validate_email
 from app import app, db
