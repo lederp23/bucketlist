@@ -161,7 +161,7 @@ BucketList is an API that allows users to sign up and add bucketlists which are 
   * **Code:** 200 <br />
     **Content:** `{ `<br />
     &nbsp;&nbsp;`"bucketlists": [  `<br />
-    &nbsp;&nbsp;&nbsp;&nbsp;`{`
+    &nbsp;&nbsp;&nbsp;&nbsp;`{` <br />
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`"created_by": "wewe1",  `<br />
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`"date_created": "Sat, 04 Mar 2017 09:46:04 GMT",`<br />
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`"date_modified": "Sat, 04 Mar 2017 09:46:04 GMT",`  <br />
