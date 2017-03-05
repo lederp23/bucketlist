@@ -370,7 +370,7 @@
   ```python
   header = {'token': 'adefeffssddrr4f3'}
   payload = {'name': 'wewe na yeye'}
-  post("/api/v1/bucketlists/", data=payload, headers=header)
+  put("/api/v1/bucketlists/", data=payload, headers=header)
   ```
 
 ----
