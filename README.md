@@ -1,3 +1,7 @@
+----
+BucketList is an API that allows users to sign up and add bucketlists which are things that they wish to do in the future. The user can also add an item to a bucketlist. Both bucketlists and items can be updated or deleted.
+----
+
 **Register User**
 ----
   Adds a user and returns the username.
@@ -155,27 +159,27 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{
-                      "bucketlists": [
-                        {
-                          "created_by": "wewe1",
-                          "date_created": "Sat, 04 Mar 2017 09:46:04 GMT",
-                          "date_modified": "Sat, 04 Mar 2017 09:46:04 GMT",
-                          "id": 6,
-                          "items": [],
-                          "name": "bucketlist1"
-                        },
-                        {
-                          "created_by": "wewe1",
-                          "date_created": "Sat, 04 Mar 2017 09:46:06 GMT",
-                          "date_modified": "Sat, 04 Mar 2017 09:46:06 GMT",
-                          "id": 7,
-                          "items": [],
-                          "name": "bucketlist1"
-                          ],
-                       "next_url": "/api/v1/bucketlists/?q=buck&limit=2&offset=2",
-                       "previous_url": ""
-                     }`
+    **Content:** `{ `
+    `                 "bucketlists": [  `
+    `                    {`
+    `                      "created_by": "wewe1",  `
+    `                      "date_created": "Sat, 04 Mar 2017 09:46:04 GMT",`  
+    `                      "date_modified": "Sat, 04 Mar 2017 09:46:04 GMT",`  
+    `                      "id": 6,  `
+    `                      "items": [],`  
+    `                      "name": "bucketlist1"  `
+    `                    },  `
+    `                    {  `
+    `                      "created_by": "wewe1",  `
+    `                      "date_created": "Sat, 04 Mar 2017 09:46:06 GMT",`  
+    `                      "date_modified": "Sat, 04 Mar 2017 09:46:06 GMT",  `
+    `                      "id": 7,  `
+    `                      "items": [],  `
+    `                      "name": "bucketlist1" `
+    `                      ],  `
+    `                   "next_url": "/api/v1/bucketlists/?q=buck&limit=2&offset=2", `
+    `                   "previous_url": ""  `
+    `                 }`
 
 * **Error Response:**
 
@@ -225,21 +229,21 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{
-                      "bucketlist": {
-                        "created_by": "wewe1",
-                        "date_created": "Sat, 04 Mar 2017 09:45:54 GMT",
-                        "date_modified": "Sat, 04 Mar 2017 09:45:54 GMT",
-                        "id": 2,
-                        "items": [
-                          {
-                            "date_created": "Sat, 04 Mar 2017 09:46:20 GMT",
-                            "date_modified": "Sat, 04 Mar 2017 09:46:20 GMT",
-                            "done": false,
-                            "id": 1,
-                            "name": "you"
-                          }
-                     }`
+    **Content:** `{`
+    `                  "bucketlist": {`
+    `                    "created_by": "wewe1",`
+    `                    "date_created": "Sat, 04 Mar 2017 09:45:54 GMT",`
+    `                    "date_modified": "Sat, 04 Mar 2017 09:45:54 GMT",`
+    `                    "id": 2,`
+    `                    "items": [`
+    `                      {`
+    `                        "date_created": "Sat, 04 Mar 2017 09:46:20 GMT",`
+    `                        "date_modified": "Sat, 04 Mar 2017 09:46:20 GMT",`
+    `                        "done": false,`
+    `                        "id": 1,`
+    `                        "name": "you"`
+    `                      }`
+    `                 }`
 
 
 * **Error Response:**
@@ -291,16 +295,16 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{
-                      "bucketlist": {
-                        "created_by": "wewe2",
-                        "date_created": "Sun, 05 Mar 2017 09:57:56 GMT",
-                        "date_modified": "Sun, 05 Mar 2017 09:57:56 GMT",
-                        "id": 25,
-                        "items": [],
-                        "name": "wewe na mimi"
-                      }
-                    }`
+    **Content:** `{`
+    `                  "bucketlist": {`
+    `                    "created_by": "wewe2",`
+    `                    "date_created": "Sun, 05 Mar 2017 09:57:56 GMT",`
+    `                    "date_modified": "Sun, 05 Mar 2017 09:57:56 GMT",`
+    `                    "id": 25,`
+    `                    "items": [],`
+    `                    "name": "wewe na mimi"`
+    `                  }`
+    `                }`
 
 * **Error Response:**
 
@@ -455,16 +459,16 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{
-                      "item": {
-                        "bucketlist_id": 2,
-                        "date_created": "Sun, 05 Mar 2017 10:14:13 GMT",
-                        "date_modified": "Sun, 05 Mar 2017 10:14:13 GMT",
-                        "done": false,
-                        "id": 5,
-                        "name": "wewe na mimi sasa"
-                      }
-                    }`
+    **Content:** `{`
+    `                  "item": {`
+    `                    "bucketlist_id": 2,`
+    `                    "date_created": "Sun, 05 Mar 2017 10:14:13 GMT",`
+    `                    "date_modified": "Sun, 05 Mar 2017 10:14:13 GMT",`
+    `                    "done": false,`
+    `                    "id": 5,`
+    `                    "name": "wewe na mimi sasa"`
+    `                  }`
+    `                }`
 
 * **Error Response:**
 
@@ -518,15 +522,15 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{
-                      "item": {
-                        "date_created": "Sun, 05 Mar 2017 10:14:13 GMT",
-                        "date_modified": "Sun, 05 Mar 2017 10:17:37 GMT",
-                        "done": false,
-                        "id": 5,
-                        "name": "wewe na mimi tena"
-                      }
-                    }`
+    **Content:** `{`
+    `                  "item": {`
+    `                    "date_created": "Sun, 05 Mar 2017 10:14:13 GMT",`
+    `                    "date_modified": "Sun, 05 Mar 2017 10:17:37 GMT",`
+    `                    "done": false,`
+    `                    "id": 5,`
+    `                    "name": "wewe na mimi tena"`
+    `                  }`
+    `                }`
 
 * **Error Response:**
 
@@ -540,7 +544,7 @@
 
   ```python
   header = {'token': 'adefeffssddrr4f3'}
-  payload = ('name': 'wewe na mimi tena')
+  payload = ('name': 'wewe na mimi tena', 'done': True)
   put("/api/v1/bucketlists/2/items/5", data=payload, headers=header)
   ```
 

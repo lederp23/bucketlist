@@ -336,7 +336,7 @@ class MyTest(TestCase):
         payload = {'name': 'item1'}
         response = self.test_app.post("/api/v1/bucketlists/1/items/",
                                       headers=self.headers, data=payload)
-        payload = {'name': 'item2'}
+        payload = {'name': 'item2', 'done': True}
         response = self.test_app.put("/api/v1/bucketlists/1/items/1",
                                      headers=self.headers, data=payload)
         data = json.loads(response.get_data(as_text=True))

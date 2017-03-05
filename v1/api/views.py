@@ -142,6 +142,7 @@ def update_item(request, id, item_id):
     """Updates a bucketlist item"""
     if requires_auth(request):
         name = request.form['name']
+        done = request.form['done']
         items=[]
         bucketlist = db.session.query(BucketList).filter(BucketList.id==id).first()
         if not bucketlist:
@@ -149,6 +150,7 @@ def update_item(request, id, item_id):
         item = db.session.query(Item).filter(Item.id==item_id).first()
         if item:
             item.name = name
+            item.done = done
             item.date_modified = datetime.datetime.now()
             db.session.commit()
             items.append({"id": item.id,\
