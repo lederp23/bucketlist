@@ -1,5 +1,5 @@
 ----
-BucketList is an API that allows users to sign up and add bucketlists which are things that they wish to do in the future. The user can also add an item to a bucketlist. Both bucketlists and items can be updated or deleted.
+<p>BucketList is an API that allows users to sign up and add bucketlists which are things that they wish to do in the future. The user can also add an item to a bucketlist. Both bucketlists and items can be updated or deleted.</p>
 ----
 
 **Register User**
