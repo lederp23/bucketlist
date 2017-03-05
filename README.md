@@ -106,11 +106,6 @@
 
   * **Content:** {'error': 'username cannot have special characters'}
 
-  OR
-
-  * **Content:** {'error': 'user already exists'}
-
-
 * **Sample Call:**
 
   ```python
