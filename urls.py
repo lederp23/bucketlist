@@ -12,13 +12,13 @@ from flask.blueprints import Blueprint
 urls = Blueprint('urls', __name__, template_folder='templates')
 
 
-@urls.route('/api/<version>/auth/login', methods=['GET', 'POST'])
+@urls.route('/api/<version>/auth/login', methods=['POST'])
 def login_api(version):
     account_views = import_account_views(version)
     return account_views.login(request)
 
 
-@urls.route('/api/<version>/auth/register', methods=['GET', 'POST'])
+@urls.route('/api/<version>/auth/register', methods=['POST'])
 def register_user(version):
     account_views = import_account_views(version)
     return account_views.register(request)

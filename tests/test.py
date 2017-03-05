@@ -24,8 +24,8 @@ class MyTest(TestCase):
         self.test_app = app.test_client()
         payload = {'username': 'lederp', 'password': 'lederp',
                    'email': 'lederp@gmail.com'}
-        response = self.test_app.get("/api/v1/auth/register", data=payload)
-        response = self.test_app.get("/api/v1/auth/login", data=payload)
+        response = self.test_app.post("/api/v1/auth/register", data=payload)
+        response = self.test_app.post("/api/v1/auth/login", data=payload)
         data = json.loads(response.get_data(as_text=True))
 
         # asserts that a user is authorized
@@ -42,49 +42,49 @@ class MyTest(TestCase):
         # asserts OK response when api version exists
         payload = {'username': 'lederp', 'password': 'lederp',
                    'email': 'lederp@gmail.com'}
-        response = self.test_app.get("/api/v1/auth/register", data=payload)
+        response = self.test_app.post("/api/v1/auth/register", data=payload)
         self.assertEqual(response.status_code, 200)
 
         # asserts status_code 404 when api version does not exist
         payload = {'username': 'lederp', 'password': 'lederp',
                    'email': 'lederp@gmail.com'}
-        response = self.test_app.get("/api/v6/auth/register", data=payload)
+        response = self.test_app.post("/api/v6/auth/register", data=payload)
         self.assertEqual(response.status_code, 404)
 
     def test_registration(self):
         """Tests for user registration"""
         # asserts status code 400 if username or password is blank
         payload = {'username': '', 'password': '', 'email': ''}
-        response = self.test_app.get("/api/v1/auth/register", data=payload)
+        response = self.test_app.post("/api/v1/auth/register", data=payload)
         self.assertEqual(response.status_code, 400)
 
         # asserts error if email is invalid
         payload = {'username': 'lederp', 'password': 'lederp', 'email': 'email'}
-        response = self.test_app.get("/api/v1/auth/register", data=payload)
+        response = self.test_app.post("/api/v1/auth/register", data=payload)
         data = json.loads(response.get_data(as_text=True))
         self.assertEqual(data['error'], 'invalid email')
 
         # asserts error if username is invalid
         payload = {'username': 'lederp*#', 'password': 'lederp',
                    'email': 'lederp@gmail.com'}
-        response = self.test_app.get("/api/v1/auth/register", data=payload)
+        response = self.test_app.post("/api/v1/auth/register", data=payload)
         data = json.loads(response.get_data(as_text=True))
         self.assertEqual(data['error'], 'username cannot have special characters')
 
         # asserts status code 400 if username or password is not sent in request
-        response = self.test_app.get("/api/v1/auth/register")
+        response = self.test_app.post("/api/v1/auth/register")
         self.assertEqual(response.status_code, 400)
 
         # asserts that the user has been registered
         payload = {'username': 'lederp', 'password': 'lederp',
                    'email': 'lederp@gmail.com'}
-        response = self.test_app.get("/api/v1/auth/register", data=payload)
+        response = self.test_app.post("/api/v1/auth/register", data=payload)
         self.assertEqual(response.status_code, 200)
 
         # asserts that the user already exists
         payload = {'username': 'lederp', 'password': 'lederp',
                    'email': 'lederp@gmail.com'}
-        response = self.test_app.get("/api/v1/auth/register", data=payload)
+        response = self.test_app.post("/api/v1/auth/register", data=payload)
         data = json.loads(response.get_data(as_text=True))
         self.assertEqual(data['error'], 'user already exists')
 
@@ -92,14 +92,28 @@ class MyTest(TestCase):
         """Tests for login"""
         payload = {'username': 'lederp', 'password': 'lederp',
                    'email': 'lederp@gmail.com'}
-        response = self.test_app.get("/api/v1/auth/register", data=payload)
+        response = self.test_app.post("/api/v1/auth/register", data=payload)
+
+        # asserts error if username is invalid
+        payload = {'username': 'lederp*#', 'password': 'lederp',
+                   'email': 'lederp@gmail.com'}
+        response = self.test_app.post("/api/v1/auth/login", data=payload)
+        data = json.loads(response.get_data(as_text=True))
+        self.assertEqual(data['error'], 'username cannot have special characters')
+
+        # asserts status code 400 if username or password is blank
+        payload = {'username': '', 'password': ''}
+        response = self.test_app.post("/api/v1/auth/login", data=payload)
+        self.assertEqual(response.status_code, 400)
 
         # asserts status code 400 if form data is not sent in request
-        response = self.test_app.get("/api/v1/auth/login")
+        response = self.test_app.post("/api/v1/auth/login")
         self.assertEqual(response.status_code, 400)
 
         # asserts that the request is successful
-        response = self.test_app.get("/api/v1/auth/login", data=payload)
+        payload = {'username': 'lederp', 'password': 'lederp',
+                   'email': 'lederp@gmail.com'}
+        response = self.test_app.post("/api/v1/auth/login", data=payload)
         data = json.loads(response.get_data(as_text=True))
         self.assertTrue(data['result'])
         self.assertEqual(response.status_code, 200)
@@ -107,13 +121,13 @@ class MyTest(TestCase):
         # asserts that user is not authorized with wrong password
         payload = {'username': 'lederp', 'password': 'leder',
                    'email': 'lederp@gmail.com'}
-        response = self.test_app.get("/api/v1/auth/login", data=payload)
+        response = self.test_app.post("/api/v1/auth/login", data=payload)
         self.assertEqual(response.status_code, 401)
 
         # asserts that a non-existant user cannot login
         payload = {'username': 'oliver', 'password': 'leder',
                    'email': 'lederp@gmail.com'}
-        response = self.test_app.get("/api/v1/auth/login", data=payload)
+        response = self.test_app.post("/api/v1/auth/login", data=payload)
         self.assertEqual(response.status_code, 404)
 
     def test_add_bucketlist(self):

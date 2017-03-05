@@ -18,6 +18,10 @@ def login(request):
     authorized = False
     username = request.form['username']
     password = request.form['password']
+    if username is '' or password is '':
+        abort(400)
+    if not re.match('^[a-zA-Z0-9-_]*$', username):
+        return jsonify({'error': 'username cannot have special characters'})
     user = db.session.query(User).filter_by(username=username).first()
     if not user:
         abort(404)
