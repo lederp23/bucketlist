@@ -24,9 +24,9 @@ BucketList is an API that allows users to sign up and add bucketlists which are 
 
     **Required:**
 
-    `username=[string]`
-    `email=[string]`
-    `password=[string]`
+    `username=[string]`<br />
+    `email=[string]`<br />
+    `password=[string]`<br />
 
 * **Success Response:**
 
@@ -81,7 +81,7 @@ BucketList is an API that allows users to sign up and add bucketlists which are 
 
     **Required:**
 
-    `username=[string]`
+    `username=[string]`<br />
     `password=[string]`
 
 * **Success Response:**
@@ -139,9 +139,9 @@ BucketList is an API that allows users to sign up and add bucketlists which are 
 
     **Optional:**
 
-    `q=[string]`
-    `limit=[integer]`
-    `offset=[integer]`
+    `q=[string]`<br />
+    `limit=[integer]`<br />
+    `offset=[integer]`<br />
 
 * **Data Params**
 
@@ -211,7 +211,7 @@ BucketList is an API that allows users to sign up and add bucketlists which are 
 
     **Required:**
 
-    `version=[string]`
+    `version=[string]`<br />
     `id=[integer]`
 
 * **Data Params**
@@ -337,7 +337,7 @@ BucketList is an API that allows users to sign up and add bucketlists which are 
 
 *  **URL Params**
 
-    `version=[string]`
+    `version=[string]`<br />
     `id=[integer]`
 
 * **Data Params**
@@ -390,7 +390,7 @@ BucketList is an API that allows users to sign up and add bucketlists which are 
 
 *  **URL Params**
 
-    `version=[string]`
+    `version=[string]`<br />
     `id=[integer]`
 
 * **Data Params**
@@ -443,7 +443,7 @@ BucketList is an API that allows users to sign up and add bucketlists which are 
 
 *  **URL Params**
 
-    `version=[string]`
+    `version=[string]`<br />
     `id=[integer]`
 
 * **Data Params**
@@ -505,8 +505,8 @@ BucketList is an API that allows users to sign up and add bucketlists which are 
 
 *  **URL Params**
 
-    `version=[string]`
-    `id=[integer]`
+    `version=[string]`<br />
+    `id=[integer]`<br />
     `item_id=[integer]`
 
 * **Data Params**
@@ -567,8 +567,8 @@ BucketList is an API that allows users to sign up and add bucketlists which are 
 
 *  **URL Params**
 
-    `version=[string]`
-    `id=[integer]`
+    `version=[string]`<br />
+    `id=[integer]`<br />
     `item_id=[integer]`
 
 * **Data Params**
