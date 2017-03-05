@@ -321,7 +321,7 @@
 
   ```python
   header = {'token': 'adefeffssddrr4f3'}
-  payload = ('name': 'wewe na mimi')
+  payload = {'name': 'wewe na mimi'}
   post("/api/v1/bucketlists/", data=payload, headers=header)
   ```
 
@@ -374,7 +374,7 @@
 
   ```python
   header = {'token': 'adefeffssddrr4f3'}
-  payload = ('name': 'wewe na yeye')
+  payload = {'name': 'wewe na yeye'}
   post("/api/v1/bucketlists/", data=payload, headers=header)
   ```
 
@@ -427,7 +427,7 @@
 
   ```python
   header = {'token': 'adefeffssddrr4f3'}
-  payload = ('name': 'wewe na yeye')
+  payload = {'name': 'wewe na yeye'}
   delete("/api/v1/bucketlists/", headers=header)
   ```
 
@@ -490,7 +490,7 @@
 
   ```python
   header = {'token': 'adefeffssddrr4f3'}
-  payload = ('name': 'wewe na mimi sasa')
+  payload = {'name': 'wewe na mimi sasa'}
   post("/api/v1/bucketlists/2/items/", data=payload, headers=header)
   ```
 
@@ -553,7 +553,7 @@
 
   ```python
   header = {'token': 'adefeffssddrr4f3'}
-  payload = ('name': 'wewe na mimi tena', 'done': True)
+  payload = {'name': 'wewe na mimi tena', 'done': True}
   put("/api/v1/bucketlists/2/items/5", data=payload, headers=header)
   ```
 
