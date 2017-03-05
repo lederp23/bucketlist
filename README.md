@@ -160,7 +160,8 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{ `<br />
+    **Content:** <br />
+    `{ `<br />
     &nbsp;&nbsp;`"bucketlists": [  `<br />
     &nbsp;&nbsp;&nbsp;&nbsp;`{` <br />
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`"created_by": "wewe1",  `<br />
@@ -231,7 +232,8 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{`<br />
+    **Content:** <br />
+    `{`<br />
     &nbsp;&nbsp;` "bucketlist": {`<br />
     &nbsp;&nbsp;&nbsp;&nbsp;`"created_by": "wewe1",`<br />
     &nbsp;&nbsp;&nbsp;&nbsp;`"date_created": "Sat, 04 Mar 2017 09:45:54 GMT",`<br />
@@ -299,7 +301,8 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{`<br />
+    **Content:** <br />
+    `{`<br />
     &nbsp;&nbsp;` "bucketlist": {`<br />
     &nbsp;&nbsp;&nbsp;&nbsp;`"created_by": "wewe2",`<br />
     &nbsp;&nbsp;&nbsp;&nbsp;`"date_created": "Sun, 05 Mar 2017 09:57:56 GMT",`<br />
@@ -463,7 +466,8 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{`<br />
+    **Content:** <br />
+    `{`<br />
     &nbsp;&nbsp;` "item": {`<br />
     &nbsp;&nbsp;&nbsp;&nbsp;`"bucketlist_id": 2,`<br />
     &nbsp;&nbsp;&nbsp;&nbsp;`"date_created": "Sun, 05 Mar 2017 10:14:13 GMT",`<br />
@@ -526,7 +530,8 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{`<br />
+    **Content:** <br />
+    `{`<br />
     &nbsp;&nbsp;` "item": {`<br />
     &nbsp;&nbsp;&nbsp;&nbsp;`"date_created": "Sun, 05 Mar 2017 10:14:13 GMT",`<br />
     &nbsp;&nbsp;&nbsp;&nbsp;`"date_modified": "Sun, 05 Mar 2017 10:17:37 GMT",`<br />
