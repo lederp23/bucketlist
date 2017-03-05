@@ -160,26 +160,27 @@ BucketList is an API that allows users to sign up and add bucketlists which are 
 
   * **Code:** 200 <br />
     **Content:** `{ `<br />
-    `                 "bucketlists": [  `<br />
-    `                    {`
-    `                      "created_by": "wewe1",  `<br />
-    `                      "date_created": "Sat, 04 Mar 2017 09:46:04 GMT",`<br />
-    `                      "date_modified": "Sat, 04 Mar 2017 09:46:04 GMT",`  <br />
-    `                      "id": 6,  `<br />
-    `                      "items": [],`  <br />
-    `                      "name": "bucketlist1"  `<br />
-    `                    },  `<br />
-    `                    {  `<br />
-    `                      "created_by": "wewe1",  `<br />
-    `                      "date_created": "Sat, 04 Mar 2017 09:46:06 GMT",`<br />  
-    `                      "date_modified": "Sat, 04 Mar 2017 09:46:06 GMT",  `<br />
-    `                      "id": 7,  `<br />
-    `                      "items": [],  `<br />
-    `                      "name": "bucketlist1" `<br />
-    `                      ],  `<br />
-    `                   "next_url": "/api/v1/bucketlists/?q=buck&limit=2&offset=2", `<br />
-    `                   "previous_url": ""  `<br />
-    `                 }`<br />
+    &nbsp;`"bucketlists": [  `<br />
+    &nbsp;&nbsp;`{`
+    &nbsp;&nbsp;&nbsp;`"created_by": "wewe1",  `<br />
+    &nbsp;&nbsp;&nbsp;`"date_created": "Sat, 04 Mar 2017 09:46:04 GMT",`<br />
+    &nbsp;&nbsp;&nbsp;`"date_modified": "Sat, 04 Mar 2017 09:46:04 GMT",`  <br />
+    &nbsp;&nbsp;&nbsp;`"id": 6,  `<br />
+    &nbsp;&nbsp;&nbsp;`"items": [],`  <br />
+    &nbsp;&nbsp;&nbsp;`"name": "bucketlist1"  `<br />
+    &nbsp;&nbsp;`},  `<br />
+    &nbsp;&nbsp;`{  `<br />
+    &nbsp;&nbsp;&nbsp;`"created_by": "wewe1",  `<br />
+    &nbsp;&nbsp;&nbsp;`"date_created": "Sat, 04 Mar 2017 09:46:06 GMT",`<br />  
+    &nbsp;&nbsp;&nbsp;`"date_modified": "Sat, 04 Mar 2017 09:46:06 GMT",  `<br />
+    &nbsp;&nbsp;&nbsp;`"id": 7,  `<br />
+    &nbsp;&nbsp;&nbsp;`"items": [],  `<br />
+    &nbsp;&nbsp;&nbsp;`"name": "bucketlist1" `<br />
+    &nbsp;&nbsp;`},  `<br />
+    &nbsp;`],  `<br />
+    &nbsp;`"next_url": "/api/v1/bucketlists/?q=buck&limit=2&offset=2", `<br />
+    &nbsp;`"previous_url": ""  `<br />
+    `}`<br />
 
 * **Error Response:**
 
@@ -230,20 +231,22 @@ BucketList is an API that allows users to sign up and add bucketlists which are 
 
   * **Code:** 200 <br />
     **Content:** `{`<br />
-    `                  "bucketlist": {`<br />
-    `                    "created_by": "wewe1",`<br />
-    `                    "date_created": "Sat, 04 Mar 2017 09:45:54 GMT",`<br />
-    `                    "date_modified": "Sat, 04 Mar 2017 09:45:54 GMT",`<br />
-    `                    "id": 2,`<br />
-    `                    "items": [`<br />
-    `                      {`
-    `                        "date_created": "Sat, 04 Mar 2017 09:46:20 GMT",`<br />
-    `                        "date_modified": "Sat, 04 Mar 2017 09:46:20 GMT",`<br />
-    `                        "done": false,`<br />
-    `                        "id": 1,`<br />
-    `                        "name": "you"`<br />
-    `                      }`<br />
-    `                 }`<br />
+    &nbsp;` "bucketlist": {`<br />
+    &nbsp;&nbsp;`"created_by": "wewe1",`<br />
+    &nbsp;&nbsp;`"date_created": "Sat, 04 Mar 2017 09:45:54 GMT",`<br />
+    &nbsp;&nbsp;`"date_modified": "Sat, 04 Mar 2017 09:45:54 GMT",`<br />
+    &nbsp;&nbsp;`"id": 2,`<br />
+    &nbsp;&nbsp;`"items": [`<br />
+    &nbsp;&nbsp;&nbsp;`{`
+    &nbsp;&nbsp;&nbsp;&nbsp;`  "date_created": "Sat, 04 Mar 2017 09:46:20 GMT",`<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;`  "date_modified": "Sat, 04 Mar 2017 09:46:20 GMT",`<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;`  "done": false,`<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;`  "id": 1,`<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;`  "name": "you"`<br />
+    &nbsp;&nbsp;&nbsp;`}`<br />
+    &nbsp;&nbsp;`]`<br />
+    &nbsp;`}`<br />
+    `}`<br />
 
 
 * **Error Response:**
@@ -296,15 +299,15 @@ BucketList is an API that allows users to sign up and add bucketlists which are 
 
   * **Code:** 200 <br />
     **Content:** `{`<br />
-    `                  "bucketlist": {`<br />
-    `                    "created_by": "wewe2",`<br />
-    `                    "date_created": "Sun, 05 Mar 2017 09:57:56 GMT",`<br />
-    `                    "date_modified": "Sun, 05 Mar 2017 09:57:56 GMT",`<br />
-    `                    "id": 25,`<br />
-    `                    "items": [],`<br />
-    `                    "name": "wewe na mimi"`<br />
-    `                  }`<br />
-    `                }`<br />
+    &nbsp;` "bucketlist": {`<br />
+    &nbsp;&nbsp;`"created_by": "wewe2",`<br />
+    &nbsp;&nbsp;`"date_created": "Sun, 05 Mar 2017 09:57:56 GMT",`<br />
+    &nbsp;&nbsp;`"date_modified": "Sun, 05 Mar 2017 09:57:56 GMT",`<br />
+    &nbsp;&nbsp;`"id": 25,`<br />
+    &nbsp;&nbsp;`"items": [],`<br />
+    &nbsp;&nbsp;`"name": "wewe na mimi"`<br />
+    &nbsp;` }`<br />
+    `}`<br />
 
 * **Error Response:**
 
@@ -460,15 +463,15 @@ BucketList is an API that allows users to sign up and add bucketlists which are 
 
   * **Code:** 200 <br />
     **Content:** `{`<br />
-    `                  "item": {`<br />
-    `                    "bucketlist_id": 2,`<br />
-    `                    "date_created": "Sun, 05 Mar 2017 10:14:13 GMT",`<br />
-    `                    "date_modified": "Sun, 05 Mar 2017 10:14:13 GMT",`<br />
-    `                    "done": false,`<br />
-    `                    "id": 5,`<br />
-    `                    "name": "wewe na mimi sasa"`<br />
-    `                  }`<br />
-    `                }`<br />
+    &nbsp;` "item": {`<br />
+    &nbsp;&nbsp;`"bucketlist_id": 2,`<br />
+    &nbsp;&nbsp;`"date_created": "Sun, 05 Mar 2017 10:14:13 GMT",`<br />
+    &nbsp;&nbsp;`"date_modified": "Sun, 05 Mar 2017 10:14:13 GMT",`<br />
+    &nbsp;&nbsp;`"done": false,`<br />
+    &nbsp;&nbsp;`"id": 5,`<br />
+    &nbsp;&nbsp;`"name": "wewe na mimi sasa"`<br />
+    &nbsp;` }`<br />
+    `}`<br />
 
 * **Error Response:**
 
@@ -523,14 +526,14 @@ BucketList is an API that allows users to sign up and add bucketlists which are 
 
   * **Code:** 200 <br />
     **Content:** `{`<br />
-    `                  "item": {`<br />
-    `                    "date_created": "Sun, 05 Mar 2017 10:14:13 GMT",`<br />
-    `                    "date_modified": "Sun, 05 Mar 2017 10:17:37 GMT",`<br />
-    `                    "done": false,`<br />
-    `                    "id": 5,`<br />
-    `                    "name": "wewe na mimi tena"`<br />
-    `                  }`<br />
-    `                }`<br />
+    &nbsp;` "item": {`<br />
+    &nbsp;&nbsp;`"date_created": "Sun, 05 Mar 2017 10:14:13 GMT",`<br />
+    &nbsp;&nbsp;`"date_modified": "Sun, 05 Mar 2017 10:17:37 GMT",`<br />
+    &nbsp;&nbsp;`"done": false,`<br />
+    &nbsp;&nbsp;`"id": 5,`<br />
+    &nbsp;&nbsp;`"name": "wewe na mimi tena"`<br />
+    &nbsp;` }`<br />
+    `}`<br />
 
 * **Error Response:**
 
