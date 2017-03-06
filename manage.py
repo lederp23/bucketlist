@@ -20,5 +20,15 @@ app.register_blueprint(urls)
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)
 
+@manager.command
+def create_db():
+    """Creates database with tables"""
+    db.create_all()
+
+@manager.command
+def drop_db():
+    """Creates database with tables"""
+    db.drop_all()
+
 if __name__ == "__main__":
     manager.run()
