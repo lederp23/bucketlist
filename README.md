@@ -9,7 +9,7 @@
 
 * **URL**
 
-  /api/<version>/auth/register
+  /api/version:/auth/register
 
 * **Method:**
 
@@ -66,7 +66,7 @@
 
 * **URL**
 
-  /api/<version>/auth/login
+  /api/version:/auth/login
 
 * **Method:**
 
@@ -121,7 +121,7 @@
 
 * **URL**
 
-  /api/<version>/bucketlists/
+  /api/version:/bucketlists/
 
 * **Method:**
 
@@ -198,7 +198,7 @@
 
 * **URL**
 
-  /api/<version>/bucketlists/<id>
+  /api/version:/bucketlists/id:
 
 * **Method:**
 
@@ -270,7 +270,7 @@
 
 * **URL**
 
-  /api/<version>/bucketlists/
+  /api/version:/bucketlists/
 
 * **Method:**
 
@@ -328,7 +328,7 @@
 
 * **URL**
 
-  /api/<version>/bucketlists/<id>
+  /api/version:/bucketlists/id:
 
 * **Method:**
 
@@ -381,7 +381,7 @@
 
 * **URL**
 
-  /api/<version>/bucketlists/<id>
+  /api/version:/bucketlists/id:
 
 * **Method:**
 
@@ -434,7 +434,7 @@
 
 * **URL**
 
-  /api/<version>/bucketlists/<id>/items/
+  /api/version:/bucketlists/id:/items/
 
 * **Method:**
 
@@ -497,7 +497,7 @@
 
 * **URL**
 
-  /api/<version>/bucketlists/<id>/items/<item_id>
+  /api/version:/bucketlists/id:/items/item_id:
 
 * **Method:**
 
@@ -560,7 +560,7 @@
 
 * **URL**
 
-  /api/<version>/bucketlists/<id>/items/<item_id>
+  /api/version:/bucketlists/id:/items/item_id:
 
 * **Method:**
 
