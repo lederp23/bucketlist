@@ -3,7 +3,8 @@ import time
 import os
 import sys
 import inspect
-currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+currentdir = os.path.dirname(os.path.abspath(
+    inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 from unittest import TestCase
@@ -69,7 +70,8 @@ class MyTest(TestCase):
                    'email': 'lederp@gmail.com'}
         response = self.test_app.post("/api/v1/auth/register", data=payload)
         data = json.loads(response.get_data(as_text=True))
-        self.assertEqual(data['error'], 'username cannot have special characters')
+        self.assertEqual(
+            data['error'], 'username cannot have special characters')
 
         # asserts status code 400 if username or password is not sent in request
         response = self.test_app.post("/api/v1/auth/register")
@@ -99,7 +101,8 @@ class MyTest(TestCase):
                    'email': 'lederp@gmail.com'}
         response = self.test_app.post("/api/v1/auth/login", data=payload)
         data = json.loads(response.get_data(as_text=True))
-        self.assertEqual(data['error'], 'username cannot have special characters')
+        self.assertEqual(
+            data['error'], 'username cannot have special characters')
 
         # asserts status code 400 if username or password is blank
         payload = {'username': '', 'password': ''}
@@ -181,7 +184,8 @@ class MyTest(TestCase):
                                      headers=headers)
         self.assertEqual(response.status_code, 401)
 
-        # asserts empty list of bucketlists when searching for missing bucketlist
+        # asserts empty list of bucketlists when searching for missing
+        # bucketlist
         query = {'q': 'reefef'}
         response = self.test_app.get("/api/v1/bucketlists/",
                                      headers=self.headers, query_string=query)
