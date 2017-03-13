@@ -175,7 +175,8 @@ def update_item(request, id, item_id):
         item = db.session.query(Item).filter(Item.id == item_id).first()
         if item:
             item.name = name
-            item.done = done
+            if done:
+                item.done = done
             item.date_modified = datetime.datetime.now()
             db.session.commit()
             items.append({"id": item.id,
