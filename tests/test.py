@@ -36,6 +36,11 @@ class MyTest(TestCase):
         token = data['access_token']
         self.headers = {'token': token}
 
+        self.payload2 = {'username': 'lederp2', 'password': 'lederp2',
+                         'email': 'lederp2@gmail.com'}
+        response2 = self.test_app.post(
+            "/api/v1/auth/register", data=self.payload2)
+
     def tearDown(self):
         os.remove('test.db')
 

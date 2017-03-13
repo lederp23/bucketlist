@@ -69,7 +69,8 @@ def get_bucketlist(requset, id):
     """Returns a bucketlist using ID"""
     if requires_auth(request):
         bucket = db.session.query(BucketList).filter(
-            BucketList.id == id).first()
+            BucketList.id == id).filter(BucketList.created_by ==
+                                        g.user.username).first()
         bucketlist = []
         items = []
         if bucket:
@@ -113,7 +114,8 @@ def update_bucketlist(request, id):
     if requires_auth(request):
         name = request.form['name']
         bucket = db.session.query(BucketList).filter(
-            BucketList.id == id).first()
+            BucketList.id == id).filter(BucketList.created_by ==
+                                        g.user.username).first()
         bucketlist = []
         items = []
         if bucket:
@@ -128,7 +130,8 @@ def delete_bucketlist(request, id):
     """Deletes a bucketlist"""
     if requires_auth(request):
         bucketlist = db.session.query(BucketList).filter(
-            BucketList.id == id).first()
+            BucketList.id == id).filter(BucketList.created_by ==
+                                        g.user.username).first()
         if bucketlist:
             db.session.delete(bucketlist)
             db.session.commit()
@@ -143,7 +146,8 @@ def add_item(request, id):
         items = []
         item = Item(name=name, bucketlist=id)
         bucketlist = db.session.query(BucketList).filter(
-            BucketList.id == id).first()
+            BucketList.id == id).filter(BucketList.created_by ==
+                                        g.user.username).first()
         if not bucketlist:
             abort(make_response("Bucketlist not found", 404))
         db.session.add(item)
@@ -164,7 +168,8 @@ def update_item(request, id, item_id):
         done = request.form['done']
         items = []
         bucketlist = db.session.query(BucketList).filter(
-            BucketList.id == id).first()
+            BucketList.id == id).filter(BucketList.created_by ==
+                                        g.user.username).first()
         if not bucketlist:
             abort(make_response("Bucketlist not found", 404))
         item = db.session.query(Item).filter(Item.id == item_id).first()
@@ -185,6 +190,11 @@ def update_item(request, id, item_id):
 def delete_item(request, id, item_id):
     """Deletes a bucketlist item"""
     if requires_auth(request):
+        bucketlist = db.session.query(BucketList).filter(
+            BucketList.id == id).filter(BucketList.created_by ==
+                                        g.user.username).first()
+        if not bucketlist:
+            abort(make_response("Bucketlist not found", 404))
         item = db.session.query(Item).filter(Item.id == item_id).first()
         if item:
             db.session.delete(item)
