@@ -49,7 +49,9 @@ def get_bucketlists(request, version):
                                 "items": items,
                                 "date_created": bucketlist.date_created,
                                 "date_modified": bucketlist.date_modified,
-                                "created_by": bucketlist.created_by})
+                                "created_by": bucketlist.created_by,
+                                "url": "/api/" + version + "/bucketlists/" +
+                                str(bucketlist.id)})
         if len(bucketlists) == limit:
             next_url = '/api/' + version + '/bucketlists/?q=' + start +\
                        '&limit=' + str(limit) + '&offset=' + str(offset + limit)
