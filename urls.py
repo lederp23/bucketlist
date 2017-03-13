@@ -6,7 +6,7 @@ currentdir = os.path.dirname(os.path.abspath(
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 import importlib
-from flask import request, abort
+from flask import request, abort, make_response
 from flask_sqlalchemy import SQLAlchemy
 from flask.blueprints import Blueprint
 
@@ -81,7 +81,7 @@ def import_account_views(version):
         mod = importlib.import_module(version + ".accounts.views")
         return mod
     except ImportError:
-        abort(404)
+        abort(make_response("Version does not exist", 404))
 
 
 def import_api_views(version):
@@ -90,4 +90,4 @@ def import_api_views(version):
         mod = importlib.import_module(version + ".api.views")
         return mod
     except ImportError:
-        abort(404)
+        abort(make_response("Version does not exist", 404))

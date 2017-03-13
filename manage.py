@@ -17,6 +17,7 @@ from v1.accounts.models import User
 migrate = Migrate(app, db)
 app.config.from_object(ProductionConfig())
 app.register_blueprint(urls)
+app.url_map.strict_slashes = False
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)
 

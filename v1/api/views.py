@@ -7,7 +7,7 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 import datetime
 from flask import g
-from flask import jsonify, abort, request
+from flask import jsonify, abort, request, make_response
 from v1.accounts.views import requires_auth
 from v1.api.models import Item, BucketList
 from flask_sqlalchemy import SQLAlchemy
@@ -29,10 +29,12 @@ def get_bucketlists(request, version):
         if start:
             bucket = db.session.query(BucketList).filter(
                 BucketList.name.contains(start)).filter(
-                    BucketList.id > offset).limit(limit)
+                    BucketList.id > offset).filter(
+                BucketList.created_by == g.user.username).limit(limit)
         else:
             bucket = db.session.query(BucketList).filter(
-                BucketList.id > offset).limit(limit)
+                BucketList.id > offset).filter(
+                BucketList.created_by == g.user.username).limit(limit)
         bucketlists = []
         for bucketlist in bucket:
             items = []
@@ -59,8 +61,8 @@ def get_bucketlists(request, version):
                 str(offset - limit)
         else:
             previous_url = ''
-        return jsonify({"bucketlists": bucketlists, "next_url": next_url,
-                        "previous_url": previous_url})
+        return jsonify({"next_url": next_url, "previous_url": previous_url,
+                        "bucketlists": bucketlists})
 
 
 def get_bucketlist(requset, id):
@@ -84,7 +86,7 @@ def get_bucketlist(requset, id):
                                "date_modified": bucket.date_modified,
                                "created_by": bucket.created_by})
         else:
-            abort(404)
+            abort(make_response("Bucketlist not found", 404))
         return jsonify({"bucketlist": bucketlist[0]})
 
 
@@ -119,7 +121,7 @@ def update_bucketlist(request, id):
             bucket.date_modified = datetime.datetime.now()
             db.session.commit()
             return jsonify({'result': True})
-        abort(404)
+        abort(make_response("Bucketlist not found", 404))
 
 
 def delete_bucketlist(request, id):
@@ -131,7 +133,7 @@ def delete_bucketlist(request, id):
             db.session.delete(bucketlist)
             db.session.commit()
             return jsonify({'result': True})
-        abort(404)
+        abort(make_response("Bucketlist not found", 404))
 
 
 def add_item(request, id):
@@ -143,7 +145,7 @@ def add_item(request, id):
         bucketlist = db.session.query(BucketList).filter(
             BucketList.id == id).first()
         if not bucketlist:
-            abort(404)
+            abort(make_response("Bucketlist not found", 404))
         db.session.add(item)
         db.session.commit()
         items.append({"id": item.id,
@@ -164,7 +166,7 @@ def update_item(request, id, item_id):
         bucketlist = db.session.query(BucketList).filter(
             BucketList.id == id).first()
         if not bucketlist:
-            abort(404)
+            abort(make_response("Bucketlist not found", 404))
         item = db.session.query(Item).filter(Item.id == item_id).first()
         if item:
             item.name = name
@@ -177,7 +179,7 @@ def update_item(request, id, item_id):
                           "date_modified": item.date_modified,
                           "done": item.done})
             return jsonify({'item': items[0]})
-        abort(404)
+        abort(make_response("Item not found", 404))
 
 
 def delete_item(request, id, item_id):
@@ -188,4 +190,4 @@ def delete_item(request, id, item_id):
             db.session.delete(item)
             db.session.commit()
             return jsonify({'result': True})
-        abort(404)
+        abort(make_response("Bucketlist/item not found", 404))

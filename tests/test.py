@@ -20,6 +20,7 @@ class MyTest(TestCase):
 
     def setUp(self):
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+        app.url_map.strict_slashes = False
         app.register_blueprint(urls)
         db.create_all()
         self.test_app = app.test_client()
@@ -157,7 +158,7 @@ class MyTest(TestCase):
         # asserts a user cannot add a bucketlist without token
         response = self.test_app.post("/api/v1/bucketlists/",
                                       data=payload)
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 400)
 
         # asserts a user cannot add a bucketlist with expired token
         time.sleep(3)
