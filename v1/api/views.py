@@ -12,8 +12,8 @@ from v1.accounts.views import requires_auth
 from v1.api.models import Item, BucketList
 from flask_sqlalchemy import SQLAlchemy
 from flask import request, jsonify, abort
-from flask_paginate import Pagination
 from app import db
+
 
 PER_PAGE = 20
 
@@ -53,14 +53,13 @@ def get_bucketlists(request, version):
                                 "url": "/api/" + version + "/bucketlists/" +
                                 str(bucketlist.id)})
         if len(bucketlists) == limit:
-            next_url = '/api/' + version + '/bucketlists/?q=' + start +\
-                       '&limit=' + str(limit) + '&offset=' + str(offset + limit)
+            next_url = '/api/' + version + '/bucketlists/?q=' + start + \
+                '&limit=' + str(limit) + '&offset=' + str(offset + limit)
         else:
             next_url = ''
         if offset >= limit:
-            previous_url = '/api/' + version + '/bucketlists/?q=' + start +\
-                           '&limit=' + str(limit) + '&offset=' + \
-                str(offset - limit)
+            previous_url = '/api/' + version + '/bucketlists/?q=' + start + \
+                '&limit=' + str(limit) + '&offset=' + str(offset - limit)
         else:
             previous_url = ''
         return jsonify({"next_url": next_url, "previous_url": previous_url,
@@ -124,7 +123,19 @@ def update_bucketlist(request, id):
             bucket.name = name
             bucket.date_modified = datetime.datetime.now()
             db.session.commit()
-            return jsonify({'result': True})
+            for item in bucket.items:
+                items.append({"id": item.id,
+                              "name": item.name,
+                              "date_created": item.date_created,
+                              "date_modified": item.date_modified,
+                              "done": item.done})
+            bucketlist.append({"id": bucket.id,
+                               "name": bucket.name,
+                               "items": items,
+                               "date_created": bucket.date_created,
+                               "date_modified": bucket.date_modified,
+                               "created_by": bucket.created_by})
+            return jsonify({'result': True, 'bucketlist': bucketlist[0]})
         abort(make_response("Bucketlist not found", 404))
 
 
@@ -137,7 +148,9 @@ def delete_bucketlist(request, id):
         if bucketlist:
             db.session.delete(bucketlist)
             db.session.commit()
-            return jsonify({'result': True})
+            return jsonify({'result': True,
+                            'message': ('Successfully deleted ' +
+                                        bucketlist.name)})
         abort(make_response("Bucketlist not found", 404))
 
 
@@ -186,7 +199,7 @@ def update_item(request, id, item_id):
                           "date_created": item.date_created,
                           "date_modified": item.date_modified,
                           "done": item.done})
-            return jsonify({'item': items[0]})
+            return jsonify({'result': True, 'item': items[0]})
         abort(make_response("Item not found", 404))
 
 
@@ -202,5 +215,6 @@ def delete_item(request, id, item_id):
         if item:
             db.session.delete(item)
             db.session.commit()
-            return jsonify({'result': True})
+            return jsonify({'result': True,
+                            'message': ('Successfully deleted ' + item.name)})
         abort(make_response("Bucketlist/item not found", 404))

@@ -19,7 +19,7 @@ def login(request):
     authorized = False
     username = request.form['username']
     password = request.form['password']
-    if username is '' or password is '':
+    if '' in [username, password]:
         abort(make_response("Username and password cannot empty", 400))
     if not re.match('^[a-zA-Z0-9-_]*$', username):
         return jsonify({'error': 'username cannot have special characters'})
@@ -32,7 +32,8 @@ def login(request):
         abort(make_response("Wrong password", 401))
     access_token = user.generate_token()
     return jsonify({'result': authorized,
-                    'access_token': access_token.decode('UTF-8')})
+                    'access_token': access_token.decode('UTF-8'),
+                    'message': 'successfully logged in'})
 
 
 def register(request):
@@ -41,7 +42,7 @@ def register(request):
     password = request.form['password']
     email = request.form['email']
     is_valid = validate_email(email)
-    if username is '' or password is '':
+    if '' in [username, password]:
         abort(make_response("Username and password cannot empty", 400))
     if not is_valid:
         return jsonify({'error': 'invalid email'})
@@ -53,7 +54,8 @@ def register(request):
     user.hash_password(password)
     db.session.add(user)
     db.session.commit()
-    return jsonify({'username': user.username})
+    return jsonify({'message': ('successfully registered with username ' +
+                                user.username)})
 
 
 def requires_auth(request):
