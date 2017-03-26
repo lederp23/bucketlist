@@ -6,6 +6,7 @@ currentdir = os.path.dirname(os.path.abspath(
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 import datetime
+import json
 from flask import g
 from flask import jsonify, abort, request, make_response
 from v1.accounts.views import requires_auth
@@ -88,7 +89,7 @@ def get_bucketlist(requset, id):
                                "date_modified": bucket.date_modified,
                                "created_by": bucket.created_by})
         else:
-            abort(make_response("Bucketlist not found", 404))
+            abort(make_response({"message": "Bucketlist not found"}, 404))
         return jsonify({"bucketlist": bucketlist[0]})
 
 
@@ -97,7 +98,8 @@ def add_bucketlist(request):
     if requires_auth(request):
         bucketlist = []
         items = []
-        name = request.form['name']
+        data = json.loads(request.get_data(as_text=True))
+        name = data['name']
         bucket = BucketList(name=name, created_by=g.user.username)
         db.session.add(bucket)
         db.session.commit()
@@ -107,13 +109,15 @@ def add_bucketlist(request):
                            "date_created": bucket.date_created,
                            "date_modified": bucket.date_modified,
                            "created_by": bucket.created_by})
-        return jsonify({'bucketlist': bucketlist[0]})
+        return jsonify({'bucketlist': bucketlist[0],
+                        'message': ("successfully added " + name)})
 
 
 def update_bucketlist(request, id):
     """Updates a bucketlist"""
     if requires_auth(request):
-        name = request.form['name']
+        data = json.loads(request.get_data(as_text=True))
+        name = data['name']
         bucket = db.session.query(BucketList).filter(
             BucketList.id == id).filter(BucketList.created_by ==
                                         g.user.username).first()
@@ -135,8 +139,9 @@ def update_bucketlist(request, id):
                                "date_created": bucket.date_created,
                                "date_modified": bucket.date_modified,
                                "created_by": bucket.created_by})
-            return jsonify({'result': True, 'bucketlist': bucketlist[0]})
-        abort(make_response("Bucketlist not found", 404))
+            return jsonify({'result': True, 'bucketlist': bucketlist[0],
+                            'message': ("successfully updated " + name)})
+        abort(make_response({"message": "Bucketlist not found"}, 404))
 
 
 def delete_bucketlist(request, id):
@@ -151,20 +156,21 @@ def delete_bucketlist(request, id):
             return jsonify({'result': True,
                             'message': ('Successfully deleted ' +
                                         bucketlist.name)})
-        abort(make_response("Bucketlist not found", 404))
+        abort(make_response({"message": "Bucketlist not found"}, 404))
 
 
 def add_item(request, id):
     """Creates new bucketlist item"""
     if requires_auth(request):
-        name = request.form['name']
+        data = json.loads(request.get_data(as_text=True))
+        name = data['name']
         items = []
         item = Item(name=name, bucketlist=id)
         bucketlist = db.session.query(BucketList).filter(
             BucketList.id == id).filter(BucketList.created_by ==
                                         g.user.username).first()
         if not bucketlist:
-            abort(make_response("Bucketlist not found", 404))
+            abort(make_response({"message": "Bucketlist not found"}, 404))
         db.session.add(item)
         db.session.commit()
         items.append({"id": item.id,
@@ -173,20 +179,23 @@ def add_item(request, id):
                       "date_modified": item.date_modified,
                       "done": item.done,
                       "bucketlist_id": item.bucketlist_id})
-        return jsonify({'item': items[0]})
+        return jsonify({'item': items[0],
+                        'message': ("successfully added " +
+                                    name + " to " + bucketlist.name)})
 
 
 def update_item(request, id, item_id):
     """Updates a bucketlist item"""
     if requires_auth(request):
-        name = request.form['name']
-        done = request.form['done']
+        data = json.loads(request.get_data(as_text=True))
+        name = data['name']
+        done = data['done']
         items = []
         bucketlist = db.session.query(BucketList).filter(
             BucketList.id == id).filter(BucketList.created_by ==
                                         g.user.username).first()
         if not bucketlist:
-            abort(make_response("Bucketlist not found", 404))
+            abort(make_response({"message": "Bucketlist not found"}, 404))
         item = db.session.query(Item).filter(Item.id == item_id).first()
         if item:
             item.name = name
@@ -199,8 +208,9 @@ def update_item(request, id, item_id):
                           "date_created": item.date_created,
                           "date_modified": item.date_modified,
                           "done": item.done})
-            return jsonify({'result': True, 'item': items[0]})
-        abort(make_response("Item not found", 404))
+            return jsonify({'result': True, 'item': items[0],
+                            'message': ("successfully updated " + name)})
+        abort(make_response({"message": "Item not found"}, 404))
 
 
 def delete_item(request, id, item_id):
@@ -210,11 +220,11 @@ def delete_item(request, id, item_id):
             BucketList.id == id).filter(BucketList.created_by ==
                                         g.user.username).first()
         if not bucketlist:
-            abort(make_response("Bucketlist not found", 404))
+            abort(make_response({"message": "Bucketlist not found"}, 404))
         item = db.session.query(Item).filter(Item.id == item_id).first()
         if item:
             db.session.delete(item)
             db.session.commit()
             return jsonify({'result': True,
                             'message': ('Successfully deleted ' + item.name)})
-        abort(make_response("Bucketlist/item not found", 404))
+        abort(make_response({"message": "Item not found"}, 404))

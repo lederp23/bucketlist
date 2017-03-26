@@ -5,7 +5,7 @@ class Config(object):
     DEBUG = True
     TESTING = False
     SQLALCHEMY_DATABASE_URI = 'sqlite://'
-    SECRET_KEY = os.environ['SECRET_KEY']
+    SECRET_KEY = os.getenv('SECRET_KEY')
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
 
