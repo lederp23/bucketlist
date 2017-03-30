@@ -19,7 +19,13 @@ def login(request):
     """Logs a user in"""
     authorized = False
     data = json.loads(request.get_data(as_text=True))
+    if not data['username']:
+        abort(make_response(json.dumps(
+            {"message": "username missing"}), 400))
     username = data['username']
+    if not data['password']:
+        abort(make_response(json.dumps(
+            {"message": "password missing"}), 400))
     password = data['password']
     if '' in [username, password]:
         return jsonify({'error': 'empty username and password'})
@@ -27,11 +33,11 @@ def login(request):
         return jsonify({'error': 'username cannot have special characters'})
     user = db.session.query(User).filter_by(username=username).first()
     if not user:
-        return jsonify({'error': 'user not found'})
+        return jsonify({'error': 'user not found'}), 404
     if user and user.verify_password(password):
         authorized = True
     else:
-        return jsonify({'error': 'wrong password'})
+        return jsonify({'error': 'wrong password'}), 401
     access_token = user.generate_token()
     return jsonify({'result': authorized,
                     'access_token': access_token.decode('UTF-8'),
@@ -41,9 +47,18 @@ def login(request):
 def register(request):
     """Registers a user"""
     data = json.loads(request.get_data(as_text=True))
+    if not data['username']:
+        abort(make_response(json.dumps(
+            {"message": "username missing"}), 400))
     username = data['username']
-    password = data['password']
+    if not data['email']:
+        abort(make_response(json.dumps(
+            {"message": "email missing"}), 400))
     email = data['email']
+    if not data['password']:
+        abort(make_response(json.dumps(
+            {"message": "password missing"}), 400))
+    password = data['password']
     is_valid = validate_email(email)
     if '' in [username, password]:
         abort(make_response("Username and password cannot empty", 400))
@@ -53,6 +68,8 @@ def register(request):
         return jsonify({'error': 'username cannot have special characters'})
     if db.session.query(User).filter_by(username=username).first() is not None:
         return jsonify({'error': 'user already exists'})
+    if db.session.query(User).filter_by(email=email).first() is not None:
+        return jsonify({'error': 'email already in use'})
     user = User(username=username, email=email, password=password)
     user.hash_password(password)
     db.session.add(user)

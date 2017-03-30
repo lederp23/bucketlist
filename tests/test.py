@@ -3,6 +3,7 @@ import time
 import os
 import sys
 import inspect
+import json
 currentdir = os.path.dirname(os.path.abspath(
     inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
@@ -24,13 +25,13 @@ class MyTest(TestCase):
         app.register_blueprint(urls)
         db.create_all()
         self.test_app = app.test_client()
-        payload = {'username': 'lederp', 'password': 'lederp',
-                   'email': 'lederp@gmail.com'}
+        payload = json.dumps({'username': 'lederp', 'password': 'lederp',
+                              'email': 'lederp@gmail.com'})
         response = self.test_app.post("/api/v1/auth/register", data=payload)
         response = self.test_app.post("/api/v1/auth/login", data=payload)
         data = json.loads(response.get_data(as_text=True))
-        self.bucketlist_payload = {'name': 'bucketlist1'}
-        self.item_payload = {'name': 'item1'}
+        self.bucketlist_payload = json.dumps({'name': 'bucketlist1'})
+        self.item_payload = json.dumps({'name': 'item1'})
 
         # asserts that a user is authorized
         self.assertTrue(data['result'])
@@ -38,8 +39,8 @@ class MyTest(TestCase):
         token = data['access_token']
         self.headers = {'token': token}
 
-        self.payload2 = {'username': 'lederp2', 'password': 'lederp2',
-                         'email': 'lederp2@gmail.com'}
+        self.payload2 = json.dumps({'username': 'lederp2', 'password': 'lederp2',
+                                    'email': 'lederp2@gmail.com'})
         response2 = self.test_app.post(
             "/api/v1/auth/register", data=self.payload2)
 
@@ -49,95 +50,100 @@ class MyTest(TestCase):
     def test_api_version(self):
         """Tests versionin of api"""
         # asserts OK response when api version exists
-        payload = {'username': 'lederp', 'password': 'lederp',
-                   'email': 'lederp@gmail.com'}
+        payload = json.dumps({'username': 'lederp', 'password': 'lederp',
+                              'email': 'lederp@gmail.com'})
         response = self.test_app.post("/api/v1/auth/register", data=payload)
         self.assertEqual(response.status_code, 200)
 
         # asserts status_code 404 when api version does not exist
-        payload = {'username': 'lederp', 'password': 'lederp',
-                   'email': 'lederp@gmail.com'}
+        payload = json.dumps({'username': 'lederp', 'password': 'lederp',
+                              'email': 'lederp@gmail.com'})
         response = self.test_app.post("/api/v6/auth/register", data=payload)
         self.assertEqual(response.status_code, 404)
 
     def test_registration(self):
         """Tests for user registration"""
         # asserts status code 400 if username or password is blank
-        payload = {'username': '', 'password': '', 'email': ''}
+        payload = json.dumps({'username': '', 'password': '', 'email': ''})
         response = self.test_app.post("/api/v1/auth/register", data=payload)
         self.assertEqual(response.status_code, 400)
 
         # asserts error if email is invalid
-        payload = {'username': 'lederp', 'password': 'lederp', 'email': 'email'}
+        payload = json.dumps(
+            {'username': 'lederp', 'password': 'lederp', 'email': 'email'})
         response = self.test_app.post("/api/v1/auth/register", data=payload)
         data = json.loads(response.get_data(as_text=True))
         self.assertEqual(data['error'], 'invalid email')
 
         # asserts error if username is invalid
-        payload = {'username': 'lederp*#', 'password': 'lederp',
-                   'email': 'lederp@gmail.com'}
+        payload = json.dumps({'username': 'lederp*#', 'password': 'lederp',
+                              'email': 'lederp@gmail.com'})
         response = self.test_app.post("/api/v1/auth/register", data=payload)
         data = json.loads(response.get_data(as_text=True))
         self.assertEqual(
             data['error'], 'username cannot have special characters')
 
         # asserts status code 400 if username or password is not sent in request
-        response = self.test_app.post("/api/v1/auth/register")
+        payload = json.dumps({'username': None, 'password': None,
+                              'email': None})
+        response = self.test_app.post("/api/v1/auth/register", data=payload)
         self.assertEqual(response.status_code, 400)
 
         # asserts that the user has been registered
-        payload = {'username': 'lederp', 'password': 'lederp',
-                   'email': 'lederp@gmail.com'}
+        payload = json.dumps({'username': 'lederp', 'password': 'lederp',
+                              'email': 'lederp@gmail.com'})
         response = self.test_app.post("/api/v1/auth/register", data=payload)
         self.assertEqual(response.status_code, 200)
 
         # asserts that the user already exists
-        payload = {'username': 'lederp', 'password': 'lederp',
-                   'email': 'lederp@gmail.com'}
+        payload = json.dumps({'username': 'lederp', 'password': 'lederp',
+                              'email': 'lederp@gmail.com'})
         response = self.test_app.post("/api/v1/auth/register", data=payload)
         data = json.loads(response.get_data(as_text=True))
         self.assertEqual(data['error'], 'user already exists')
 
     def test_login(self):
         """Tests for login"""
-        payload = {'username': 'lederp', 'password': 'lederp',
-                   'email': 'lederp@gmail.com'}
+        payload = json.dumps({'username': 'lederp', 'password': 'lederp',
+                              'email': 'lederp@gmail.com'})
         response = self.test_app.post("/api/v1/auth/register", data=payload)
 
         # asserts error if username is invalid
-        payload = {'username': 'lederp*#', 'password': 'lederp',
-                   'email': 'lederp@gmail.com'}
+        payload = json.dumps({'username': 'lederp*#', 'password': 'lederp',
+                              'email': 'lederp@gmail.com'})
         response = self.test_app.post("/api/v1/auth/login", data=payload)
         data = json.loads(response.get_data(as_text=True))
         self.assertEqual(
             data['error'], 'username cannot have special characters')
 
         # asserts status code 400 if username or password is blank
-        payload = {'username': '', 'password': ''}
+        payload = json.dumps({'username': '', 'password': ''})
         response = self.test_app.post("/api/v1/auth/login", data=payload)
         self.assertEqual(response.status_code, 400)
 
         # asserts status code 400 if form data is not sent in request
-        response = self.test_app.post("/api/v1/auth/login")
+        payload = json.dumps({'username': None, 'password': None,
+                              'email': None})
+        response = self.test_app.post("/api/v1/auth/login", data=payload)
         self.assertEqual(response.status_code, 400)
 
         # asserts that the request is successful
-        payload = {'username': 'lederp', 'password': 'lederp',
-                   'email': 'lederp@gmail.com'}
+        payload = json.dumps({'username': 'lederp', 'password': 'lederp',
+                              'email': 'lederp@gmail.com'})
         response = self.test_app.post("/api/v1/auth/login", data=payload)
         data = json.loads(response.get_data(as_text=True))
         self.assertTrue(data['result'])
         self.assertEqual(response.status_code, 200)
 
         # asserts that user is not authorized with wrong password
-        payload = {'username': 'lederp', 'password': 'leder',
-                   'email': 'lederp@gmail.com'}
+        payload = json.dumps({'username': 'lederp', 'password': 'lederfdffd',
+                              'email': 'lederp@gmail.com'})
         response = self.test_app.post("/api/v1/auth/login", data=payload)
         self.assertEqual(response.status_code, 401)
 
         # asserts that a non-existant user cannot login
-        payload = {'username': 'oliver', 'password': 'leder',
-                   'email': 'lederp@gmail.com'}
+        payload = json.dumps({'username': 'oliver', 'password': 'leder',
+                              'email': 'lederp@gmail.com'})
         response = self.test_app.post("/api/v1/auth/login", data=payload)
         self.assertEqual(response.status_code, 404)
 
@@ -152,7 +158,7 @@ class MyTest(TestCase):
         self.assertEqual(data['bucketlist']['name'], 'bucketlist1')
 
         # asserts status_code 404 if name of bucketlist is not provided
-        response = self.test_app.post("/api/v1/bucketlists/",
+        response = self.test_app.post("/api/v1/bucketlists/", data=json.dumps({'name': None}),
                                       headers=self.headers)
         self.assertEqual(response.status_code, 400)
 
@@ -215,7 +221,7 @@ class MyTest(TestCase):
         data = json.loads(response.get_data(as_text=True))
         self.assertTrue(len(data['bucketlists']) == 0)
 
-        payload = {'name': 'bucketlist2'}
+        payload = json.dumps({'name': 'bucketlist2'})
         response = self.test_app.post("/api/v1/bucketlists/",
                                       headers=self.headers, data=payload)
 
@@ -260,7 +266,7 @@ class MyTest(TestCase):
         response = self.test_app.post("/api/v1/bucketlists/",
                                       headers=self.headers,
                                       data=self.bucketlist_payload)
-        payload = {'name': 'bucketlist2'}
+        payload = json.dumps({'name': 'bucketlist2'})
         response = self.test_app.put("/api/v1/bucketlists/1",
                                      headers=self.headers, data=payload)
         data = json.loads(response.get_data(as_text=True))
@@ -316,7 +322,7 @@ class MyTest(TestCase):
         self.assertEqual(data['item']['name'], 'item1')
 
         # asserts status_code 404 if name of item is not provided
-        response = self.test_app.post("/api/v1/bucketlists/1/items/",
+        response = self.test_app.post("/api/v1/bucketlists/1/items/", data=json.dumps({"name": None}),
                                       headers=self.headers)
         self.assertEqual(response.status_code, 400)
 
@@ -351,7 +357,7 @@ class MyTest(TestCase):
         response = self.test_app.post("/api/v1/bucketlists/1/items/",
                                       headers=self.headers,
                                       data=self.item_payload)
-        payload = {'name': 'item2', 'done': True}
+        payload = json.dumps({'name': 'item2', 'done': True})
         response = self.test_app.put("/api/v1/bucketlists/1/items/1",
                                      headers=self.headers, data=payload)
         data = json.loads(response.get_data(as_text=True))
