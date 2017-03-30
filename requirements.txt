@@ -46,7 +46,6 @@ python-dateutil==2.6.0
 python-editor==1.0.3
 python-http-client==2.2.1
 pytz==2016.10
-query-string==0.0.0
 requests==2.13.0
 six==1.10.0
 snowballstemmer==1.2.1
