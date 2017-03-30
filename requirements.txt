@@ -28,7 +28,6 @@ get==0.0.0
 gunicorn==19.6.0
 httplib2==0.10.3
 imagesize==0.7.1
-importlib==1.0.4
 itsdangerous==0.24
 Jinja2==2.9.5
 Mako==1.0.6
