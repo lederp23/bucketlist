@@ -1,6 +1,3 @@
-from v1.api.models import BucketList, Item
-from v1.accounts.models import User
-
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 from flask import Flask
@@ -17,6 +14,8 @@ app = Flask(__name__)
 db = SQLAlchemy(app)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
+from v1.api.models import BucketList, Item
+from v1.accounts.models import User
 
 migrate = Migrate(app, db)
 app.config.from_object(ProductionConfig())
