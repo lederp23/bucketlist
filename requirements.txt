@@ -53,4 +53,4 @@ Sphinx==1.5.3
 SQLAlchemy==1.1.5
 validate-email==1.3
 Werkzeug==0.12.1
-WTForms==2.1`
+WTForms==2.1.0
