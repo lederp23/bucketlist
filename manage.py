@@ -4,18 +4,14 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS, cross_origin
 
-from v1.api.models import BucketList, Item
-from v1.accounts.models import User
 from config import ProductionConfig
 from urls import urls
 import os
-
-app = Flask(__name__)
-db = SQLAlchemy(app)
-cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
-
+from app import app, db
 from v1.api.models import BucketList, Item
 from v1.accounts.models import User
+
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 migrate = Migrate(app, db)
 app.config.from_object(ProductionConfig())
@@ -29,6 +25,7 @@ manager.add_command('db', MigrateCommand)
 def create_db():
     """Creates database with tables"""
     db.create_all()
+    db.session.commit()
 
 
 @manager.command

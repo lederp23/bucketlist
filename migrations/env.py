@@ -3,8 +3,6 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 from logging.config import fileConfig
 import logging
-from v1.accounts.models import User
-from v1.api.models import BucketList, Item
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -20,16 +18,9 @@ logger = logging.getLogger('alembic.env')
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 from flask import current_app
-from app import app, db
-from v1.accounts.models import User
-from v1.api.models import BucketList, Item
 config.set_main_option('sqlalchemy.url',
                        current_app.config.get('SQLALCHEMY_DATABASE_URI'))
-from v1.accounts.models import User
-from v1.api.models import BucketList, Item
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///bucketlist.db'
-
-target_metadata = db.Model.metadata
+target_metadata = current_app.extensions['migrate'].db.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -49,9 +40,6 @@ def run_migrations_offline():
     script output.
 
     """
-    from v1.accounts.models import User
-    from v1.api.models import BucketList, Item
-
     url = config.get_main_option("sqlalchemy.url")
     context.configure(url=url)
 
@@ -66,8 +54,6 @@ def run_migrations_online():
     and associate a connection with the context.
 
     """
-    from v1.accounts.models import User
-    from v1.api.models import BucketList, Item
 
     # this callback is used to prevent an auto-migration from being generated
     # when there are no changes to the schema
