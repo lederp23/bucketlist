@@ -8,7 +8,7 @@ sys.path.insert(0, parentdir)
 import datetime
 from sqlalchemy import Column, Integer, String, DateTime, Boolean
 from flask_sqlalchemy import SQLAlchemy
-from app import db
+from app import *
 
 
 class Item(db.Model):
