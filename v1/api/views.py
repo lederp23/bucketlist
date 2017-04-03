@@ -13,9 +13,8 @@ from v1.accounts.views import requires_auth
 from v1.api.models import Item, BucketList
 from flask_sqlalchemy import SQLAlchemy
 from flask import request, jsonify, abort
-import app
+from app import db
 
-db = app.db
 
 PER_PAGE = 20
 

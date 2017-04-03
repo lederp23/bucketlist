@@ -12,9 +12,7 @@ from v1.accounts.models import User, verify_auth_token
 from flask_sqlalchemy import SQLAlchemy
 from flask import request, jsonify, abort, make_response
 from validate_email import validate_email
-import app
-
-db = app.db
+from app import app, db
 
 
 def login(request):

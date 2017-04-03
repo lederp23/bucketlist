@@ -13,9 +13,7 @@ from itsdangerous import (TimedJSONWebSignatureSerializer
 from werkzeug.security import generate_password_hash, check_password_hash
 from v1.api.models import BucketList
 from flask import Flask
-import app
-
-db = app.db
+from app import db, app
 
 
 class User(db.Model):
@@ -42,8 +40,7 @@ class User(db.Model):
 
     def generate_token(self, expiration=7200):
         """Generates authorization token for a user"""
-        serializer = Serializer(
-            app.app.config['SECRET_KEY'], expires_in=expiration)
+        serializer = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
         return serializer.dumps({'id': self.id})
 
 
