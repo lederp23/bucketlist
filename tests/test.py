@@ -10,7 +10,7 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 from unittest import TestCase
 from flask_sqlalchemy import SQLAlchemy
-from app import app, db
+from db_setup import app, db
 from v1.accounts.models import User
 from v1.api.models import BucketList, Item
 from urls import urls
