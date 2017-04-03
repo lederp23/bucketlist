@@ -1,6 +1,3 @@
-import os
-import sys
-import inspect
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 from flask import Flask
@@ -8,16 +5,17 @@ from flask_cors import CORS, cross_origin
 
 from config import ProductionConfig
 from urls import urls
+import os
+from app import app, db
 from v1.api.models import BucketList, Item
 from v1.accounts.models import User
-from app import app, db
 
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-migrate = Migrate(app, db)
 app.config.from_object(ProductionConfig())
 app.register_blueprint(urls)
 app.url_map.strict_slashes = False
+migrate = Migrate(app, db)
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)
 
@@ -34,5 +32,5 @@ def drop_db():
     """Creates database with tables"""
     db.drop_all()
 
-if __name__ == "__app__":
+if __name__ == "__main__":
     manager.run()

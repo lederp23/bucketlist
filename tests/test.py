@@ -15,14 +15,17 @@ from v1.accounts.models import User
 from v1.api.models import BucketList, Item
 from urls import urls
 import json
+from config import TestingConfig
+
+app.url_map.strict_slashes = False
+app.register_blueprint(urls)
+app.config.from_object(TestingConfig())
 
 
 class MyTest(TestCase):
 
     def setUp(self):
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-        app.url_map.strict_slashes = False
-        app.register_blueprint(urls)
+
         db.create_all()
         self.test_app = app.test_client()
         payload = json.dumps({'username': 'lederp', 'password': 'lederp',
