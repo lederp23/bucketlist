@@ -10,8 +10,6 @@ from app import app, db
 from v1.api.models import BucketList, Item
 from v1.accounts.models import User
 
-app = Flask()
-
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 migrate = Migrate(app, db)
