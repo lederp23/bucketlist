@@ -23,6 +23,8 @@ with app.app_context():
 migrate = Migrate(app, db)
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)
+db.create_all()
+db.session.commit()
 
 
 @manager.command
