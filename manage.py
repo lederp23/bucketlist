@@ -8,9 +8,9 @@ from flask_cors import CORS, cross_origin
 
 from config import ProductionConfig
 from urls import urls
-from app import app, db
 from v1.api.models import BucketList, Item
 from v1.accounts.models import User
+from app import app, db
 
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
