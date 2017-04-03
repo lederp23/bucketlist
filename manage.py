@@ -9,10 +9,11 @@ import os
 from db_setup import app, db
 from v1.api.models import BucketList, Item
 from v1.accounts.models import User
+from config import ProductionConfig
 
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
-
 app.config.from_object(ProductionConfig())
+
 app.register_blueprint(urls)
 app.url_map.strict_slashes = False
 migrate = Migrate(app, db)
