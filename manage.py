@@ -1,3 +1,10 @@
+import os
+import sys
+import inspect
+currentdir = os.path.dirname(os.path.abspath(
+    inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0, parentdir)
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 from flask import Flask
@@ -5,18 +12,17 @@ from flask_cors import CORS, cross_origin
 
 from config import ProductionConfig
 from urls import urls
-import os
-from app import main, db
+from app import app, db
 from v1.api.models import BucketList, Item
 from v1.accounts.models import User
 
-cors = CORS(main, resources={r"/api/*": {"origins": "*"}})
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-migrate = Migrate(main, db)
-main.config.from_object(ProductionConfig())
-main.register_blueprint(urls)
-main.url_map.strict_slashes = False
-manager = Manager(main)
+migrate = Migrate(app, db)
+app.config.from_object(ProductionConfig())
+app.register_blueprint(urls)
+app.url_map.strict_slashes = False
+manager = Manager(app)
 manager.add_command('db', MigrateCommand)
 
 
@@ -32,5 +38,5 @@ def drop_db():
     """Creates database with tables"""
     db.drop_all()
 
-if __name__ == "__main__":
+if __name__ == "__app__":
     manager.run()
