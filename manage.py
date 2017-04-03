@@ -6,7 +6,8 @@ from flask_cors import CORS, cross_origin
 from config import ProductionConfig
 from urls import urls
 import os
-from app import *
+from app import app
+from db import db
 from v1.api.models import BucketList, Item
 from v1.accounts.models import User
 
