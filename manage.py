@@ -6,17 +6,17 @@ from flask_cors import CORS, cross_origin
 from config import ProductionConfig
 from urls import urls
 import os
-from app import app, db
+from app import main, db
 from v1.api.models import BucketList, Item
 from v1.accounts.models import User
 
-cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+cors = CORS(main, resources={r"/api/*": {"origins": "*"}})
 
-migrate = Migrate(app, db)
-app.config.from_object(ProductionConfig())
-app.register_blueprint(urls)
-app.url_map.strict_slashes = False
-manager = Manager(app)
+migrate = Migrate(main, db)
+main.config.from_object(ProductionConfig())
+main.register_blueprint(urls)
+main.url_map.strict_slashes = False
+manager = Manager(main)
 manager.add_command('db', MigrateCommand)
 
 

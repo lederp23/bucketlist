@@ -13,7 +13,7 @@ from itsdangerous import (TimedJSONWebSignatureSerializer
 from werkzeug.security import generate_password_hash, check_password_hash
 from v1.api.models import BucketList
 from flask import Flask
-from app import db, app
+from app import db
 
 
 class User(db.Model):

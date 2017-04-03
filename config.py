@@ -11,7 +11,7 @@ class Config(object):
 
 class ProductionConfig(Config):
     DEBUG = False
-    SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI')
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///bucketlist.db'
 
 
 class DevelopmentConfig(Config):
