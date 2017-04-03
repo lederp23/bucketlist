@@ -40,7 +40,7 @@ class User(db.Model):
 
     def generate_token(self, expiration=7200):
         """Generates authorization token for a user"""
-        serializer = Serializer(os.getenv('SECRET_KEY'), expires_in=expiration)
+        serializer = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
         return serializer.dumps({'id': self.id})
 
 
