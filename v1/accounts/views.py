@@ -28,19 +28,16 @@ def login(request):
             {"message": "password missing"}), 400))
     password = data['password']
     if '' in [username, password]:
-        abort(make_response(json.dumps(
-            {'error': 'empty username and password'}), 400))
+        return jsonify({'error': 'empty username and password'})
     if not re.match('^[a-zA-Z0-9-_]*$', username):
         return jsonify({'error': 'username cannot have special characters'})
     user = db.session.query(User).filter_by(username=username).first()
     if not user:
-        abort(make_response(json.dumps(
-            {"error": "user not found"}), 404))
+        return jsonify({'error': 'user not found'})
     if user and user.verify_password(password):
         authorized = True
     else:
-        abort(make_response(json.dumps(
-            {"error": "wrong password"}), 401))
+        return jsonify({'error': 'wrong password'})
     access_token = user.generate_token()
     return jsonify({'result': authorized,
                     'access_token': access_token.decode('UTF-8'),

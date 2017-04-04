@@ -142,13 +142,15 @@ class MyTest(TestCase):
         payload = json.dumps({'username': 'lederp', 'password': 'lederfdffd',
                               'email': 'lederp@gmail.com'})
         response = self.test_app.post("/api/v1/auth/login", data=payload)
-        self.assertEqual(response.status_code, 401)
+        data = json.loads(response.get_data(as_text=True))
+        self.assertEqual(data['error'], "wrong password")
 
         # asserts that a non-existant user cannot login
         payload = json.dumps({'username': 'oliver', 'password': 'leder',
                               'email': 'lederp@gmail.com'})
         response = self.test_app.post("/api/v1/auth/login", data=payload)
-        self.assertEqual(response.status_code, 404)
+        data = json.loads(response.get_data(as_text=True))
+        self.assertEqual(data['error'], "user not found")
 
     def test_add_bucketlist(self):
         """Tests for adding a bucketlist"""
