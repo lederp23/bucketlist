@@ -38,7 +38,8 @@ class BucketList(db.Model):
     date_created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     date_modified = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     created_by = db.Column(db.Integer, nullable=False)
-    items = db.relationship(Item, backref='bucketlists', lazy='dynamic')
+    items = db.relationship(Item, backref='bucketlists',
+                            cascade="all,delete", lazy='dynamic')
 
     def __init__(self, name, created_by):
         self.name = name

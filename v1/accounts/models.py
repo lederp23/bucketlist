@@ -23,7 +23,8 @@ class User(db.Model):
     username = db.Column(String, unique=True)
     email = db.Column(String, unique=True)
     password = db.Column(String)
-    bucketlists = db.relationship(BucketList, backref='users', lazy='dynamic')
+    bucketlists = db.relationship(
+        BucketList, backref='users', cascade="all,delete", lazy='dynamic')
 
     def __init__(self, username, email, password):
         self.username = username
