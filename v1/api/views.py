@@ -45,6 +45,7 @@ def get_bucketlists(request, version):
                               "date_created": item.date_created,
                               "date_modified": item.date_modified,
                               "done": item.done})
+            items = sorted(items, key=lambda k: k['date_created'], reverse=True)
             bucketlists.append({"id": bucketlist.id,
                                 "name": bucketlist.name,
                                 "items": items,
