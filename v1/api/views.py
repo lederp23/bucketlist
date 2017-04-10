@@ -11,7 +11,7 @@ from flask import g
 from flask import jsonify, abort, request, make_response
 from v1.accounts.views import requires_auth
 from v1.api.models import Item, BucketList
-from flask_sqlalchemy import SQLAlchemy, desc
+from flask_sqlalchemy import SQLAlchemy
 from flask import request, jsonify, abort
 from db_setup import db
 
