@@ -11,7 +11,7 @@ from flask import g
 from flask import jsonify, abort, request, make_response
 from v1.accounts.views import requires_auth
 from v1.api.models import Item, BucketList
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy, desc
 from flask import request, jsonify, abort
 from db_setup import db
 
@@ -31,11 +31,11 @@ def get_bucketlists(request, version):
             bucket = db.session.query(BucketList).filter(
                 BucketList.name.contains(start)).filter(
                     BucketList.id > offset).filter(
-                BucketList.created_by == g.user.username).limit(limit)
+                BucketList.created_by == g.user.username).order_by(desc(BucketList.date_created)).limit(limit)
         else:
             bucket = db.session.query(BucketList).filter(
                 BucketList.id > offset).filter(
-                BucketList.created_by == g.user.username).limit(limit)
+                BucketList.created_by == g.user.username).order_by(desc(BucketList.date_created)).limit(limit)
         bucketlists = []
         for bucketlist in bucket:
             items = []
