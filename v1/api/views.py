@@ -31,11 +31,11 @@ def get_bucketlists(request, version):
             bucket = db.session.query(BucketList).filter(
                 BucketList.name.contains(start)).filter(
                     BucketList.id > offset).filter(
-                BucketList.created_by == g.user.username).order_by(desc(BucketList.date_created)).limit(limit)
+                BucketList.created_by == g.user.username).order_by(BucketList.date_created.desc()).limit(limit)
         else:
             bucket = db.session.query(BucketList).filter(
                 BucketList.id > offset).filter(
-                BucketList.created_by == g.user.username).order_by(desc(BucketList.date_created)).limit(limit)
+                BucketList.created_by == g.user.username).order_by(BucketList.date_created.desc()).limit(limit)
         bucketlists = []
         for bucketlist in bucket:
             items = []
