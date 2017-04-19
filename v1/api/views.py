@@ -22,6 +22,7 @@ PER_PAGE = 20
 def get_bucketlists(request, version):
     """Returns all bucketlists"""
     if requires_auth(request):
+        next_page = 0
         limit = int(request.args.get('limit') if request.args.get('limit')
                     else PER_PAGE)
         offset = int(request.args.get('offset')
@@ -32,10 +33,17 @@ def get_bucketlists(request, version):
                 BucketList.name.contains(start)).filter(
                     BucketList.id > offset).filter(
                 BucketList.created_by == g.user.username).order_by(BucketList.date_created.desc()).limit(limit)
+            next_page = db.session.query(BucketList).filter(
+                BucketList.name.contains(start)).filter(
+                    BucketList.id > (offset + limit)).filter(
+                BucketList.created_by == g.user.username).order_by(BucketList.date_created.desc()).count()
         else:
             bucket = db.session.query(BucketList).filter(
                 BucketList.id > offset).filter(
                 BucketList.created_by == g.user.username).order_by(BucketList.date_created.desc()).limit(limit)
+            next_page = db.session.query(BucketList).filter(
+                BucketList.id > (offset + limit)).filter(
+                BucketList.created_by == g.user.username).order_by(BucketList.date_created.desc()).count()
         bucketlists = []
         for bucketlist in bucket:
             items = []
@@ -54,7 +62,7 @@ def get_bucketlists(request, version):
                                 "created_by": bucketlist.created_by,
                                 "url": "/api/" + version + "/bucketlists/" +
                                 str(bucketlist.id)})
-        if len(bucketlists) == limit:
+        if len(bucketlists) == limit and next_page > 0:
             next_url = '/api/' + version + '/bucketlists/?q=' + start + \
                 '&limit=' + str(limit) + '&offset=' + str(offset + limit)
         else:
