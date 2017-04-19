@@ -28,22 +28,24 @@ def get_bucketlists(request, version):
         offset = int(request.args.get('offset')
                      if request.args.get('offset') else 0)
         start = (request.args.get('q') if request.args.get('q') else '')
+        count = db.session.query(BucketList).count()
+        offset = count - offset
         if start:
-            bucket = db.session.query(BucketList)..order_by(BucketList.date_created.desc())filter(
+            bucket = db.session.query(BucketList).filter(
                 BucketList.name.contains(start)).filter(
-                    BucketList.id > offset).filter(
-                BucketList.created_by == g.user.username).limit(limit)
-            next_page = db.session.query(BucketList).order_by(BucketList.date_created.desc()).filter(
+                    BucketList.id < offset).filter(
+                BucketList.created_by == g.user.username).order_by(BucketList.date_created.desc()).limit(limit)
+            next_page = db.session.query(BucketList).filter(
                 BucketList.name.contains(start)).filter(
-                    BucketList.id > (offset + limit)).filter(
-                BucketList.created_by == g.user.username).count()
+                    BucketList.id < (offset + limit)).filter(
+                BucketList.created_by == g.user.username).order_by(BucketList.date_created.desc()).count()
         else:
-            bucket = db.session.query(BucketList).order_by(BucketList.date_created.desc()).filter(
-                BucketList.id > offset).filter(
-                BucketList.created_by == g.user.username).limit(limit)
-            next_page = db.session.query(BucketList).order_by(BucketList.date_created.desc()).filter(
-                BucketList.id > (offset + limit)).filter(
-                BucketList.created_by == g.user.username).count()
+            bucket = db.session.query(BucketList).filter(
+                BucketList.id < offset).filter(
+                BucketList.created_by == g.user.username).order_by(BucketList.date_created.desc()).limit(limit)
+            next_page = db.session.query(BucketList).filter(
+                BucketList.id < (offset + limit)).filter(
+                BucketList.created_by == g.user.username).order_by(BucketList.date_created.desc()).count()
         bucketlists = []
         for bucketlist in bucket:
             items = []
@@ -67,7 +69,7 @@ def get_bucketlists(request, version):
                 '&limit=' + str(limit) + '&offset=' + str(offset + limit)
         else:
             next_url = ''
-        if offset >= limit:
+        if (count - offset) >= limit:
             previous_url = '/api/' + version + '/bucketlists/?q=' + start + \
                 '&limit=' + str(limit) + '&offset=' + str(offset - limit)
         else:
