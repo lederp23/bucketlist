@@ -33,19 +33,19 @@ def get_bucketlists(request, version):
         if start:
             bucket = db.session.query(BucketList).filter(
                 BucketList.name.contains(start)).filter(
-                    BucketList.id < offset).filter(
-                BucketList.created_by == g.user.username).order_by(BucketList.date_created.desc()).limit(limit)
+                    BucketList.id <= offset).filter(
+                BucketList.created_by == g.user.username).order_by(BucketList.id.desc()).limit(limit)
             next_page = db.session.query(BucketList).filter(
                 BucketList.name.contains(start)).filter(
                     BucketList.id < (offset + limit)).filter(
-                BucketList.created_by == g.user.username).order_by(BucketList.date_created.desc()).count()
+                BucketList.created_by == g.user.username).order_by(BucketList.id.desc()).count()
         else:
             bucket = db.session.query(BucketList).filter(
-                BucketList.id < offset).filter(
-                BucketList.created_by == g.user.username).order_by(BucketList.date_created.desc()).limit(limit)
+                BucketList.id <= offset).filter(
+                BucketList.created_by == g.user.username).order_by(BucketList.id.desc()).limit(limit)
             next_page = db.session.query(BucketList).filter(
                 BucketList.id < (offset + limit)).filter(
-                BucketList.created_by == g.user.username).order_by(BucketList.date_created.desc()).count()
+                BucketList.created_by == g.user.username).order_by(BucketList.id.desc()).count()
         bucketlists = []
         for bucketlist in bucket:
             items = []
@@ -115,6 +115,12 @@ def add_bucketlist(request):
             abort(make_response(json.dumps(
                 {"message": "Bucketlist name missing"}), 400))
         name = data['name']
+        count = db.session.query(BucketList).filter(BucketList.name ==
+                                                    name).filter(BucketList.created_by ==
+                                                                 g.user.username).count()
+        if count > 0:
+            return jsonify({'message': (name + " already exists"),
+                            "bucketlist": []})
         bucket = BucketList(name=name, created_by=g.user.username)
         db.session.add(bucket)
         db.session.commit()
