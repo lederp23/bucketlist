@@ -4,14 +4,22 @@ import os
 class Config(object):
     DEBUG = True
     TESTING = False
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///bucketlist.db'
+    POSTGRES = {
+        'user': 'postgres',
+        'pw': '',
+        'db': 'bucketlist',
+        'host': 'localhost',
+        'port': '5432',
+    }
+
+    SQLALCHEMY_DATABASE_URI = 'postgresql://%(user)s:\
+   %(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
     SECRET_KEY = os.getenv('SECRET_KEY')
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
 
 class ProductionConfig(Config):
     DEBUG = False
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///bucketlist.db'
 
 
 class DevelopmentConfig(Config):
@@ -21,4 +29,3 @@ class DevelopmentConfig(Config):
 class TestingConfig(Config):
     TESTING = True
     SECRET_KEY = os.getenv('SECRET_KEY')
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///test.db'
