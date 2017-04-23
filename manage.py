@@ -36,7 +36,7 @@ def create_db():
 
 @manager.command
 def drop_db():
-    """Creates database with tables"""
+    """Deletez database"""
     db.drop_all()
 
 if __name__ == "__main__":
