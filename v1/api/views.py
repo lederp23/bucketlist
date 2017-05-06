@@ -22,26 +22,20 @@ PER_PAGE = 20
 def get_bucketlists(request, version):
     """Returns all bucketlists"""
     if requires_auth(request):
-        next_page = 0
         limit = int(request.args.get('limit') if request.args.get('limit')
                     else PER_PAGE)
         offset = int(request.args.get('offset')
                      if request.args.get('offset') else 0)
         start = (request.args.get('q') if request.args.get('q') else '')
-        count = db.session.query(BucketList).count()
-        offset = count - offset
+        count = db.session.query(BucketList).filter(
+            BucketList.created_by == g.user.username).count()
         if start:
             bucket = db.session.query(BucketList).filter(
                 BucketList.name.contains(start)).filter(
-                BucketList.created_by == g.user.username).order_by(BucketList.id.desc())[-(offset):]
-            next_page = db.session.query(BucketList).filter(
-                BucketList.name.contains(start)).filter(
-                BucketList.created_by == g.user.username).order_by(BucketList.id.desc())[-(offset + limit):]
+                BucketList.created_by == g.user.username).order_by(BucketList.id.desc())[:(offset + limit)]
         else:
             bucket = db.session.query(BucketList).filter(
-                BucketList.created_by == g.user.username).order_by(BucketList.id.desc())[-offset:]
-            next_page = db.session.query(BucketList).filter(
-                BucketList.created_by == g.user.username).order_by(BucketList.id.desc())[-(offset + limit):]
+                BucketList.created_by == g.user.username).order_by(BucketList.id.desc())[:(offset + limit)]
         bucketlists = []
         for bucketlist in bucket:
             items = []
@@ -60,17 +54,20 @@ def get_bucketlists(request, version):
                                 "created_by": bucketlist.created_by,
                                 "url": "/api/" + version + "/bucketlists/" +
                                 str(bucketlist.id)})
-        bucketlists = bucketlists[:limit]
-        if len(bucketlists) == limit and len(next_page) > 0 + limit:
+        print(len(bucketlists), count, (len(bucketlists) % limit))
+        if len(bucketlists) < count:
             next_url = '/api/' + version + '/bucketlists/?q=' + start + \
                 '&limit=' + str(limit) + '&offset=' + str(offset + limit)
         else:
-            next_url = ''
-        if (count - offset) >= limit:
+            next_url = None
+        if offset >= limit:
             previous_url = '/api/' + version + '/bucketlists/?q=' + start + \
                 '&limit=' + str(limit) + '&offset=' + str(offset - limit)
         else:
             previous_url = ''
+        number = (limit if (len(bucketlists) % limit)
+                  == 0 else (len(bucketlists) % limit))
+        bucketlists = bucketlists[:number]
         return jsonify({"next_url": next_url, "previous_url": previous_url,
                         "bucketlists": bucketlists})
 
