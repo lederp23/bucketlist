@@ -55,7 +55,7 @@ def get_bucketlists(request, version):
                                 "url": "/api/" + version + "/bucketlists/" +
                                 str(bucketlist.id)})
         print(len(bucketlists), count, (len(bucketlists) % limit))
-        if len(bucketlists) < count - limit:
+        if len(bucketlists) < count:
             next_url = '/api/' + version + '/bucketlists/?q=' + start + \
                 '&limit=' + str(limit) + '&offset=' + str(offset + limit)
         else:
