@@ -55,7 +55,7 @@ def get_bucketlists(request, version):
                                 "url": "/api/" + version + "/bucketlists/" +
                                 str(bucketlist.id)})
         print(len(bucketlists), count, (len(bucketlists) % limit))
-        if len(bucketlists) < count:
+        if len(bucketlists) < count - limit:
             next_url = '/api/' + version + '/bucketlists/?q=' + start + \
                 '&limit=' + str(limit) + '&offset=' + str(offset + limit)
         else:
@@ -67,7 +67,7 @@ def get_bucketlists(request, version):
             previous_url = ''
         number = (limit if (len(bucketlists) % limit)
                   == 0 else (len(bucketlists) % limit))
-        bucketlists = bucketlists[:number]
+        bucketlists = bucketlists[-number:]
         return jsonify({"next_url": next_url, "previous_url": previous_url,
                         "bucketlists": bucketlists})
 
