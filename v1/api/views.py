@@ -210,7 +210,6 @@ def update_item(request, id, item_id):
     if requires_auth(request):
         data = json.loads(request.get_data(as_text=True))
         name = data['name']
-        done = data['done']
         items = []
         bucketlist = db.session.query(BucketList).filter(
             BucketList.id == id).filter(BucketList.created_by ==
@@ -221,8 +220,8 @@ def update_item(request, id, item_id):
         item = db.session.query(Item).filter(Item.id == item_id).first()
         if item:
             item.name = name
-            if done:
-                item.done = done
+            if "done" in data.keys:
+                item.done = data['done']
             item.date_modified = datetime.datetime.now()
             db.session.commit()
             items.append({"id": item.id,
