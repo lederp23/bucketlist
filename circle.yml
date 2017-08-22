@@ -3,7 +3,7 @@ machine:
     version: 3.6.2
   environment:
     SECRET_KEY: "SECRET"
-    repo_token: RHWqhQE4f7RScvL6p2iRqGFiXZkmoMhBq
+    repo_token: FXPIfcK7LGoEAwp7b82OBt3VsX47ksYKP
 
 dependencies:
   override:
