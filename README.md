@@ -1,4 +1,5 @@
 [![Coverage Status](https://coveralls.io/repos/github/andela-omunala/bucketlist/badge.svg?branch=master)](https://coveralls.io/github/andela-omunala/bucketlist?branch=master) [![CircleCI](https://circleci.com/gh/andela-omunala/bucketlist/tree/master.svg?style=svg)](https://circleci.com/gh/andela-omunala/bucketlist/tree/master)
+[![Code Health](https://landscape.io/github/andela-omunala/bucketlist/master/landscape.svg?style=flat)](https://landscape.io/github/andela-omunala/bucketlist/master)
 
 **BUCKETLIST API**
 ----
