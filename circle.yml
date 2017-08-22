@@ -3,6 +3,7 @@ machine:
     version: 3.6.2
   environment:
     SECRET_KEY: "SECRET"
+    repo_token: FXPIfcK7LGoEAwp7b82OBt3VsX47ksYKP
 
 dependencies:
   override:
@@ -12,3 +13,5 @@ test:
   override:
     - createdb bucketlist
     - nosetests tests/test.py --cover-package=v1 --cover-erase
+  post:
+    - coveralls

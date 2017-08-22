@@ -8,6 +8,7 @@ Babel==2.3.4
 blinker==1.4
 click==6.7
 coverage==4.3.4
+coveralls==1.2.0
 docutils==0.13.1
 Flask==0.12
 Flask-Autodoc==0.1.2
@@ -46,6 +47,7 @@ python-dateutil==2.6.0
 python-editor==1.0.3
 python-http-client==2.2.1
 pytz==2016.10
+pyyaml==3.12
 requests==2.13.0
 six==1.10.0
 snowballstemmer==1.2.1

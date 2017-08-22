@@ -1,3 +1,4 @@
+[![Coverage Status](https://coveralls.io/repos/github/andela-omunala/bucketlist/badge.svg?branch=master)](https://coveralls.io/github/andela-omunala/bucketlist?branch=master) [![CircleCI](https://circleci.com/gh/andela-omunala/bucketlist/tree/master.svg?style=svg)](https://circleci.com/gh/andela-omunala/bucketlist/tree/master)
 **BUCKETLIST API**
 ----
 <p>BucketList is an API that allows users to sign up and add bucketlists which are things that they wish to do in the future. The user can also add an item to a bucketlist. Both bucketlists and items can be updated or deleted.</p>
