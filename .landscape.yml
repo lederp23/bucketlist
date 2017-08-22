@@ -17,3 +17,8 @@ ignore-patterns:
 python-targets:
   - 2
   - 3
+<<<<<<< HEAD
+=======
+pep8:
+  full: true
+>>>>>>> feat(landscape): setup landscape
