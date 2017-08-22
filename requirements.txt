@@ -7,6 +7,7 @@ autopep8==1.2.4
 Babel==2.3.4
 blinker==1.4
 click==6.7
+codecov==2.0.9
 coverage==4.3.4
 coveralls==1.2.0
 docutils==0.13.1
