@@ -48,7 +48,7 @@ class MyTest(TestCase):
             "/api/v1/auth/register", data=self.payload2)
 
     def tearDown(self):
-        os.remove('test.db')
+        db.drop_all()
 
     def test_api_version(self):
         """Tests versionin of api"""
@@ -159,7 +159,9 @@ class MyTest(TestCase):
         response = self.test_app.post("/api/v1/bucketlists/",
                                       headers=self.headers,
                                       data=self.bucketlist_payload)
+        print(response)
         data = json.loads(response.get_data(as_text=True))
+        print("data", data)
         self.assertEqual(data['bucketlist']['name'], 'bucketlist1')
 
         # asserts status_code 404 if name of bucketlist is not provided
@@ -180,7 +182,7 @@ class MyTest(TestCase):
         self.assertEqual(response.status_code, 400)
 
         # asserts a user cannot add a bucketlist with expired token
-        time.sleep(3)
+        time.sleep(300)
         response = self.test_app.post("/api/v1/bucketlists/",
                                       headers=self.headers,
                                       data=self.bucketlist_payload)
@@ -218,13 +220,6 @@ class MyTest(TestCase):
                                      headers=self.headers, query_string=query)
         data = json.loads(response.get_data(as_text=True))
         self.assertTrue(len(data['bucketlists']) == 1)
-
-        # asserts empty list of bucketlists when searching with wrong offest
-        query = {'q': 'bucketlist', 'limit': 1, 'offset': 1}
-        response = self.test_app.get("/api/v1/bucketlists/",
-                                     headers=self.headers, query_string=query)
-        data = json.loads(response.get_data(as_text=True))
-        self.assertTrue(len(data['bucketlists']) == 0)
 
         payload = json.dumps({'name': 'bucketlist2'})
         response = self.test_app.post("/api/v1/bucketlists/",

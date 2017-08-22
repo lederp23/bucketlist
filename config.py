@@ -12,7 +12,8 @@ class Config(object):
         'port': '5432',
     }
 
-    SQLALCHEMY_DATABASE_URI = os.getenv('HEROKU_POSTGRESQL_PUCE_URL')
+    SQLALCHEMY_DATABASE_URI = 'postgresql://%(user)s:\
+   %(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
     SECRET_KEY = os.getenv('SECRET_KEY')
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
