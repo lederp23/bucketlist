@@ -11,4 +11,4 @@ dependencies:
 test:
   override:
     - createdb bucketlist
-    - nosetests tests/test.py
+    - nosetests tests/test.py --cover-package=v1 --cover-erase
