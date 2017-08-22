@@ -4,6 +4,7 @@ machine:
   environment:
     SECRET_KEY: "SECRET"
     repo_token: FXPIfcK7LGoEAwp7b82OBt3VsX47ksYKP
+    token: 28d42bcc-f964-47cd-9c26-9a0492ea94ee
 
 dependencies:
   override:
@@ -12,6 +13,7 @@ dependencies:
 test:
   override:
     - createdb bucketlist
-    - nosetests tests/test.py --cover-package=v1 --cover-erase
+    - nosetests tests/test.py --with-coverage --cover-package=v1 --cover-erase
   post:
     - coveralls
+    - bash <(curl -s https://codecov.io/bash)
