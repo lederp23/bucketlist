@@ -11,7 +11,6 @@ class Config(object):
         'host': 'localhost',
         'port': '5432',
     }
-
     SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE')
     SECRET_KEY = os.getenv('SECRET_KEY')
     SQLALCHEMY_TRACK_MODIFICATIONS = True
