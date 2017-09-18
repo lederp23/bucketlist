@@ -30,12 +30,18 @@ def get_bucketlists(request, version):
         count = db.session.query(BucketList).filter(
             BucketList.created_by == g.user.username).count()
         if start:
+            count = db.session.query(BucketList).filter(
+                BucketList.created_by == g.user.username).filter(
+                    BucketList.name.contains(start)).count()
             bucket = db.session.query(BucketList).filter(
                 BucketList.name.contains(start)).filter(
-                BucketList.created_by == g.user.username).order_by(BucketList.id.desc())[:(offset + limit)]
+                    BucketList.created_by == g.user.username
+                ).order_by(BucketList.id.desc())[:(offset + limit)]
         else:
             bucket = db.session.query(BucketList).filter(
-                BucketList.created_by == g.user.username).order_by(BucketList.id.desc())[:(offset + limit)]
+                BucketList.created_by == g.user.username).order_by(
+                    BucketList.id.desc()
+                )[:(offset + limit)]
         bucketlists = []
         for bucketlist in bucket:
             items = []
@@ -54,7 +60,6 @@ def get_bucketlists(request, version):
                                 "created_by": bucketlist.created_by,
                                 "url": "/api/" + version + "/bucketlists/" +
                                 str(bucketlist.id)})
-        print(len(bucketlists), count, (len(bucketlists) % limit))
         if len(bucketlists) < count:
             next_url = '/api/' + version + '/bucketlists/?q=' + start + \
                 '&limit=' + str(limit) + '&offset=' + str(offset + limit)
@@ -109,9 +114,9 @@ def add_bucketlist(request):
             abort(make_response(json.dumps(
                 {"message": "Bucketlist name missing"}), 400))
         name = data['name']
-        count = db.session.query(BucketList).filter(BucketList.name ==
-                                                    name).filter(BucketList.created_by ==
-                                                                 g.user.username).count()
+        count = db.session.query(BucketList).filter(
+            BucketList.name == name
+        ).filter(BucketList.created_by == g.user.username).count()
         if count > 0:
             return jsonify({'message': (name + " already exists"),
                             "bucketlist": []})
