@@ -1,4 +1,3 @@
-import urllib
 import time
 import os
 import sys
@@ -9,12 +8,10 @@ currentdir = os.path.dirname(os.path.abspath(
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 from unittest import TestCase
-from flask_sqlalchemy import SQLAlchemy
 from db_setup import app, db
 from v1.accounts.models import User
 from v1.api.models import BucketList, Item
 from urls import urls
-import json
 from config import TestingConfig
 
 app.url_map.strict_slashes = False
@@ -28,10 +25,11 @@ class MyTest(TestCase):
 
         db.create_all()
         self.test_app = app.test_client()
-        payload = json.dumps({'username': 'lederp', 'password': 'lederp',
-                              'email': 'lederp@gmail.com'})
-        response = self.test_app.post("/api/v1/auth/register", data=payload)
-        response = self.test_app.post("/api/v1/auth/login", data=payload)
+        self.payload = json.dumps({'username': 'lederp', 'password': 'lederp',
+                                   'email': 'lederp@gmail.com'})
+        response = self.test_app.post("/api/v1/auth/register",
+                                      data=self.payload)
+        response = self.test_app.post("/api/v1/auth/login", data=self.payload)
         data = json.loads(response.get_data(as_text=True))
         self.bucketlist_payload = json.dumps({'name': 'bucketlist1'})
         self.item_payload = json.dumps({'name': 'item1'})
@@ -42,10 +40,10 @@ class MyTest(TestCase):
         token = data['access_token']
         self.headers = {'token': token}
 
-        self.payload2 = json.dumps({'username': 'lederp2', 'password': 'lederp2',
+        self.payload2 = json.dumps({'username': 'lederp2',
+                                    'password': 'lederp2',
                                     'email': 'lederp2@gmail.com'})
-        response2 = self.test_app.post(
-            "/api/v1/auth/register", data=self.payload2)
+        self.test_app.post("/api/v1/auth/register", data=self.payload2)
 
     def tearDown(self):
         db.drop_all()
@@ -66,14 +64,17 @@ class MyTest(TestCase):
 
     def test_registration(self):
         """Tests for user registration"""
-        # asserts status code 400 if username or password is blank
-        payload = json.dumps({'username': '', 'password': '', 'email': ''})
-        response = self.test_app.post("/api/v1/auth/register", data=payload)
-        self.assertEqual(response.status_code, 400)
+        # asserts a user cannot register with an existing email
+        new_payload = json.dumps({'username': 'ledersp', 'password': 'ledesrp',
+                                  'email': 'lederp@gmail.com'})
+        response = self.test_app.post("/api/v1/auth/register",
+                                      data=new_payload)
+        self.assertEqual(json.loads(response.get_data(as_text=True))['error'],
+                         'email already in use')
 
         # asserts error if email is invalid
         payload = json.dumps(
-            {'username': 'lederp', 'password': 'lederp', 'email': 'email'})
+            {'username': 'lederp', 'password': 'lederp', 'email': 'emanil'})
         response = self.test_app.post("/api/v1/auth/register", data=payload)
         data = json.loads(response.get_data(as_text=True))
         self.assertEqual(data['error'], 'invalid email')
@@ -86,10 +87,28 @@ class MyTest(TestCase):
         self.assertEqual(
             data['error'], 'username cannot have special characters')
 
-        # asserts status code 400 if username or password is not sent in request
-        payload = json.dumps({'username': None, 'password': None,
+        # asserts status code 400 if username is not sent in request
+        payload = json.dumps({'username': None, 'password': 'lederp',
+                              'email': 'dsds@ssds.com'})
+        response = self.test_app.post("/api/v1/auth/register", data=payload)
+        data = json.loads(response.get_data(as_text=True))
+        self.assertEqual(data['message'], 'username missing')
+        self.assertEqual(response.status_code, 400)
+
+        # asserts status code 400 if password is not sent in request
+        payload = json.dumps({'username': 'ssss', 'password': None,
+                              'email': 'dsds@ssds.com'})
+        response = self.test_app.post("/api/v1/auth/register", data=payload)
+        data = json.loads(response.get_data(as_text=True))
+        self.assertEqual(data['message'], 'password missing')
+        self.assertEqual(response.status_code, 400)
+
+        # asserts status code 400 if email is not sent in request
+        payload = json.dumps({'username': 'ddfd', 'password': 'lederp',
                               'email': None})
         response = self.test_app.post("/api/v1/auth/register", data=payload)
+        data = json.loads(response.get_data(as_text=True))
+        self.assertEqual(data['message'], 'email missing')
         self.assertEqual(response.status_code, 400)
 
         # asserts that the user has been registered
@@ -119,17 +138,6 @@ class MyTest(TestCase):
         self.assertEqual(
             data['error'], 'username cannot have special characters')
 
-        # asserts status code 400 if username or password is blank
-        payload = json.dumps({'username': '', 'password': ''})
-        response = self.test_app.post("/api/v1/auth/login", data=payload)
-        self.assertEqual(response.status_code, 400)
-
-        # asserts status code 400 if form data is not sent in request
-        payload = json.dumps({'username': None, 'password': None,
-                              'email': None})
-        response = self.test_app.post("/api/v1/auth/login", data=payload)
-        self.assertEqual(response.status_code, 400)
-
         # asserts that the request is successful
         payload = json.dumps({'username': 'lederp', 'password': 'lederp',
                               'email': 'lederp@gmail.com'})
@@ -152,20 +160,41 @@ class MyTest(TestCase):
         data = json.loads(response.get_data(as_text=True))
         self.assertEqual(data['error'], "user not found")
 
+        # asserts status code 400 if username is not sent in request
+        payload = json.dumps({'username': None, 'password': 'lederp',
+                              'email': 'dsds@ssds.com'})
+        response = self.test_app.post("/api/v1/auth/login", data=payload)
+        data = json.loads(response.get_data(as_text=True))
+        self.assertEqual(data['message'], 'username missing')
+        self.assertEqual(response.status_code, 400)
+
+        # asserts status code 400 if password is not sent in request
+        payload = json.dumps({'username': 'ssss', 'password': None,
+                              'email': 'dsds@ssds.com'})
+        response = self.test_app.post("/api/v1/auth/login", data=payload)
+        data = json.loads(response.get_data(as_text=True))
+        self.assertEqual(data['message'], 'password missing')
+        self.assertEqual(response.status_code, 400)
+
     def test_add_bucketlist(self):
         """Tests for adding a bucketlist"""
-
         # asserts that a bucketlist has been added
         response = self.test_app.post("/api/v1/bucketlists/",
                                       headers=self.headers,
                                       data=self.bucketlist_payload)
-        print(response)
         data = json.loads(response.get_data(as_text=True))
-        print("data", data)
         self.assertEqual(data['bucketlist']['name'], 'bucketlist1')
 
+        # asserts that a bucketlist cannot be added twice
+        response = self.test_app.post("/api/v1/bucketlists/",
+                                      headers=self.headers,
+                                      data=self.bucketlist_payload)
+        data = json.loads(response.get_data(as_text=True))
+        self.assertEqual(data['message'], 'bucketlist1 already exists')
+
         # asserts status_code 404 if name of bucketlist is not provided
-        response = self.test_app.post("/api/v1/bucketlists/", data=json.dumps({'name': None}),
+        response = self.test_app.post("/api/v1/bucketlists/",
+                                      data=json.dumps({'name': None}),
                                       headers=self.headers)
         self.assertEqual(response.status_code, 400)
 
@@ -182,7 +211,7 @@ class MyTest(TestCase):
         self.assertEqual(response.status_code, 400)
 
         # asserts a user cannot add a bucketlist with expired token
-        time.sleep(301)
+        time.sleep(int(os.getenv('EXPIRE')) + 1)
         response = self.test_app.post("/api/v1/bucketlists/",
                                       headers=self.headers,
                                       data=self.bucketlist_payload)
@@ -226,7 +255,13 @@ class MyTest(TestCase):
                                       headers=self.headers, data=payload)
 
         # asserts number of bucketlists when limiting number of bucketlists
-        query = {'limit': 1}
+        query = {'limit': 1,  'offset': 1}
+        response = self.test_app.get("/api/v1/bucketlists/",
+                                     headers=self.headers, query_string=query)
+        data = json.loads(response.get_data(as_text=True))
+        self.assertTrue(len(data['bucketlists']) == 1)
+
+        query = {'limit': 1,  'offset': 0}
         response = self.test_app.get("/api/v1/bucketlists/",
                                      headers=self.headers, query_string=query)
         data = json.loads(response.get_data(as_text=True))
@@ -266,6 +301,9 @@ class MyTest(TestCase):
         response = self.test_app.post("/api/v1/bucketlists/",
                                       headers=self.headers,
                                       data=self.bucketlist_payload)
+        self.test_app.post("/api/v1/bucketlists/1/items/",
+                           headers=self.headers,
+                           data=self.item_payload)
         payload = json.dumps({'name': 'bucketlist2'})
         response = self.test_app.put("/api/v1/bucketlists/1",
                                      headers=self.headers, data=payload)
@@ -322,7 +360,8 @@ class MyTest(TestCase):
         self.assertEqual(data['item']['name'], 'item1')
 
         # asserts status_code 404 if name of item is not provided
-        response = self.test_app.post("/api/v1/bucketlists/1/items/", data=json.dumps({"name": None}),
+        response = self.test_app.post("/api/v1/bucketlists/1/items/",
+                                      data=json.dumps({"name": None}),
                                       headers=self.headers)
         self.assertEqual(response.status_code, 400)
 

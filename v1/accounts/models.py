@@ -6,13 +6,11 @@ currentdir = os.path.dirname(os.path.abspath(
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 from flask import g
-from sqlalchemy import Column, Integer, String
-from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Integer, String
 from itsdangerous import (TimedJSONWebSignatureSerializer
                           as Serializer, BadSignature, SignatureExpired)
 from werkzeug.security import generate_password_hash, check_password_hash
 from v1.api.models import BucketList
-from flask import Flask
 from db_setup import app, db
 
 
@@ -39,9 +37,10 @@ class User(db.Model):
         """Verifies provided password"""
         return check_password_hash(self.password, current_password)
 
-    def generate_token(self, expiration=300):
+    def generate_token(self, expiration=int(os.getenv('EXPIRE'))):
         """Generates authorization token for a user"""
-        serializer = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
+        serializer = Serializer(app.config['SECRET_KEY'],
+                                expires_in=expiration)
         return serializer.dumps({'id': self.id})
 
 

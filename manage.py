@@ -1,15 +1,10 @@
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
-from flask import Flask
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 
 from config import ProductionConfig
 from urls import urls
-import os
 from db_setup import app, db
-from v1.api.models import BucketList, Item
-from v1.accounts.models import User
-from config import ProductionConfig
 
 app.config.from_object(ProductionConfig())
 

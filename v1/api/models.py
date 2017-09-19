@@ -6,8 +6,6 @@ currentdir = os.path.dirname(os.path.abspath(
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 import datetime
-from sqlalchemy import Column, Integer, String, DateTime, Boolean
-from flask_sqlalchemy import SQLAlchemy
 from db_setup import db
 
 
@@ -19,7 +17,7 @@ class Item(db.Model):
     name = db.Column(db.String)
     date_created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     date_modified = db.Column(db.DateTime, default=datetime.datetime.utcnow)
-    done = Column(db.Boolean, default=False)
+    done = db.Column(db.Boolean, default=False)
     bucketlist_id = db.Column(db.Integer, db.ForeignKey('bucketlists.id'),
                               nullable=False)
 

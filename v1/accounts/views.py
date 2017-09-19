@@ -7,12 +7,10 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 import re
 import json
-from flask import g
 from v1.accounts.models import User, verify_auth_token
-from flask_sqlalchemy import SQLAlchemy
-from flask import request, jsonify, abort, make_response
+from flask import jsonify, abort, make_response
 from validate_email import validate_email
-from db_setup import app, db
+from db_setup import db
 
 
 def login(request):
@@ -27,8 +25,6 @@ def login(request):
         abort(make_response(json.dumps(
             {"message": "password missing"}), 400))
     password = data['password']
-    if '' in [username, password]:
-        return jsonify({'error': 'empty username and password'})
     if not re.match('^[a-zA-Z0-9-_]*$', username):
         return jsonify({'error': 'username cannot have special characters'})
     user = db.session.query(User).filter_by(username=username).first()
@@ -60,8 +56,6 @@ def register(request):
             {"message": "password missing"}), 400))
     password = data['password']
     is_valid = validate_email(email)
-    if '' in [username, password]:
-        abort(make_response("Username and password cannot empty", 400))
     if not is_valid:
         return jsonify({'error': 'invalid email'})
     if not re.match('^[a-zA-Z0-9-_]*$', username):

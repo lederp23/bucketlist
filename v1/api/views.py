@@ -8,11 +8,9 @@ sys.path.insert(0, parentdir)
 import datetime
 import json
 from flask import g
-from flask import jsonify, abort, request, make_response
+from flask import jsonify, abort, make_response
 from v1.accounts.views import requires_auth
 from v1.api.models import Item, BucketList
-from flask_sqlalchemy import SQLAlchemy
-from flask import request, jsonify, abort
 from db_setup import db
 
 
@@ -51,7 +49,9 @@ def get_bucketlists(request, version):
                               "date_created": item.date_created,
                               "date_modified": item.date_modified,
                               "done": item.done})
-            items = sorted(items, key=lambda k: k['date_created'], reverse=True)
+            items = sorted(
+                items, key=lambda k: k['date_created'], reverse=True
+            )
             bucketlists.append({"id": bucketlist.id,
                                 "name": bucketlist.name,
                                 "items": items,
@@ -77,12 +77,12 @@ def get_bucketlists(request, version):
                         "bucketlists": bucketlists})
 
 
-def get_bucketlist(request, id):
+def get_bucketlist(request, bucketlist_id):
     """Returns a bucketlist using ID"""
     if requires_auth(request):
         bucket = db.session.query(BucketList).filter(
-            BucketList.id == id).filter(BucketList.created_by ==
-                                        g.user.username).first()
+            BucketList.id == bucketlist_id).filter(BucketList.created_by ==
+                                                   g.user.username).first()
         bucketlist = []
         items = []
         if bucket:
@@ -133,14 +133,14 @@ def add_bucketlist(request):
                         'message': ("successfully added " + name)})
 
 
-def update_bucketlist(request, id):
+def update_bucketlist(request, bucketlist_id):
     """Updates a bucketlist"""
     if requires_auth(request):
         data = json.loads(request.get_data(as_text=True))
         name = data['name']
         bucket = db.session.query(BucketList).filter(
-            BucketList.id == id).filter(BucketList.created_by ==
-                                        g.user.username).first()
+            BucketList.id == bucketlist_id).filter(BucketList.created_by ==
+                                                   g.user.username).first()
         bucketlist = []
         items = []
         if bucket:
@@ -165,12 +165,12 @@ def update_bucketlist(request, id):
             {"message": "Bucketlist not found"}), 404))
 
 
-def delete_bucketlist(request, id):
+def delete_bucketlist(request, bucketlist_id):
     """Deletes a bucketlist"""
     if requires_auth(request):
         bucketlist = db.session.query(BucketList).filter(
-            BucketList.id == id).filter(BucketList.created_by ==
-                                        g.user.username).first()
+            BucketList.id == bucketlist_id).filter(BucketList.created_by ==
+                                                   g.user.username).first()
         if bucketlist:
             db.session.delete(bucketlist)
             db.session.commit()
@@ -181,7 +181,7 @@ def delete_bucketlist(request, id):
             {"message": "Bucketlist not found"}), 404))
 
 
-def add_item(request, id):
+def add_item(request, bucketlist_id):
     """Creates new bucketlist item"""
     if requires_auth(request):
         data = json.loads(request.get_data(as_text=True))
@@ -190,10 +190,10 @@ def add_item(request, id):
                 {"message": "Item name missing"}), 400))
         name = data['name']
         items = []
-        item = Item(name=name, bucketlist=id)
+        item = Item(name=name, bucketlist=bucketlist_id)
         bucketlist = db.session.query(BucketList).filter(
-            BucketList.id == id).filter(BucketList.created_by ==
-                                        g.user.username).first()
+            BucketList.id == bucketlist_id).filter(BucketList.created_by ==
+                                                   g.user.username).first()
         if not bucketlist:
             abort(make_response(json.dumps(
                 {"message": "Bucketlist not found"}), 404))
@@ -210,15 +210,15 @@ def add_item(request, id):
                                     name + " to " + bucketlist.name)})
 
 
-def update_item(request, id, item_id):
+def update_item(request, bucketlist_id, item_id):
     """Updates a bucketlist item"""
     if requires_auth(request):
         data = json.loads(request.get_data(as_text=True))
         name = data['name']
         items = []
         bucketlist = db.session.query(BucketList).filter(
-            BucketList.id == id).filter(BucketList.created_by ==
-                                        g.user.username).first()
+            BucketList.id == bucketlist_id).filter(BucketList.created_by ==
+                                                   g.user.username).first()
         if not bucketlist:
             abort(make_response(json.dumps(
                 {"message": "Bucketlist not found"}), 404))
@@ -239,12 +239,12 @@ def update_item(request, id, item_id):
         abort(make_response(json.dumps({"message": "Item not found"}), 404))
 
 
-def delete_item(request, id, item_id):
+def delete_item(request, bucketlist_id, item_id):
     """Deletes a bucketlist item"""
     if requires_auth(request):
         bucketlist = db.session.query(BucketList).filter(
-            BucketList.id == id).filter(BucketList.created_by ==
-                                        g.user.username).first()
+            BucketList.id == bucketlist_id).filter(BucketList.created_by ==
+                                                   g.user.username).first()
         if not bucketlist:
             abort(make_response(json.dumps(
                 {"message": "Bucketlist not found"}), 404))
