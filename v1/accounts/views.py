@@ -56,8 +56,6 @@ def register(request):
             {"message": "password missing"}), 400))
     password = data['password']
     is_valid = validate_email(email)
-    if '' in [username, password]:
-        abort(make_response("Username and password cannot empty", 400))
     if not is_valid:
         return jsonify({'error': 'invalid email'})
     if not re.match('^[a-zA-Z0-9-_]*$', username):

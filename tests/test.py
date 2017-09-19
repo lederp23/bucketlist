@@ -64,11 +64,6 @@ class MyTest(TestCase):
 
     def test_registration(self):
         """Tests for user registration"""
-        # asserts status code 400 if username or password is blank
-        payload = json.dumps({'username': '', 'password': '', 'email': ''})
-        response = self.test_app.post("/api/v1/auth/register", data=payload)
-        self.assertEqual(response.status_code, 400)
-
         # asserts a user cannot register with an existing email
         new_payload = json.dumps({'username': 'ledersp', 'password': 'ledesrp',
                                   'email': 'lederp@gmail.com'})
