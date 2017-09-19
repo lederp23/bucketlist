@@ -138,6 +138,12 @@ def update_bucketlist(request, bucketlist_id):
     if requires_auth(request):
         data = json.loads(request.get_data(as_text=True))
         name = data['name']
+        count = db.session.query(BucketList).filter(
+            BucketList.name == name
+        ).filter(BucketList.created_by == g.user.username).count()
+        if count > 0:
+            return jsonify({'message': (name + " is already in use"),
+                            "bucketlist": []})
         bucket = db.session.query(BucketList).filter(
             BucketList.id == bucketlist_id).filter(BucketList.created_by ==
                                                    g.user.username).first()
@@ -189,6 +195,12 @@ def add_item(request, bucketlist_id):
             abort(make_response(json.dumps(
                 {"message": "Item name missing"}), 400))
         name = data['name']
+        count = db.session.query(Item).filter(
+            Item.name == name
+        ).filter(Item.bucketlist_id == bucketlist_id).count()
+        if count > 0:
+            return jsonify({'message': (name + " already exists"),
+                            "item": []})
         items = []
         item = Item(name=name, bucketlist=bucketlist_id)
         bucketlist = db.session.query(BucketList).filter(
@@ -216,12 +228,18 @@ def update_item(request, bucketlist_id, item_id):
         data = json.loads(request.get_data(as_text=True))
         name = data['name']
         items = []
+        count = db.session.query(Item).filter(
+            Item.name == name
+        ).filter(Item.bucketlist_id == bucketlist_id).count()
         bucketlist = db.session.query(BucketList).filter(
             BucketList.id == bucketlist_id).filter(BucketList.created_by ==
                                                    g.user.username).first()
         if not bucketlist:
             abort(make_response(json.dumps(
                 {"message": "Bucketlist not found"}), 404))
+        if count > 0:
+            return jsonify({'message': (name + " is already in use"),
+                            "item": []})
         item = db.session.query(Item).filter(Item.id == item_id).first()
         if item:
             item.name = name
