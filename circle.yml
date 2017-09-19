@@ -5,6 +5,7 @@ machine:
     SECRET_KEY: "SECRET"
     repo_token: FXPIfcK7LGoEAwp7b82OBt3VsX47ksYKP
     token: 28d42bcc-f964-47cd-9c26-9a0492ea94ee
+    EXPIRE: 1
 
 dependencies:
   override:

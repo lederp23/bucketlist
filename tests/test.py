@@ -216,7 +216,7 @@ class MyTest(TestCase):
         self.assertEqual(response.status_code, 400)
 
         # asserts a user cannot add a bucketlist with expired token
-        time.sleep(301)
+        time.sleep(int(os.getenv('EXPIRE')) + 1)
         response = self.test_app.post("/api/v1/bucketlists/",
                                       headers=self.headers,
                                       data=self.bucketlist_payload)

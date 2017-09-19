@@ -37,9 +37,10 @@ class User(db.Model):
         """Verifies provided password"""
         return check_password_hash(self.password, current_password)
 
-    def generate_token(self, expiration=300):
+    def generate_token(self, expiration=int(os.getenv('EXPIRE'))):
         """Generates authorization token for a user"""
-        serializer = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
+        serializer = Serializer(app.config['SECRET_KEY'],
+                                expires_in=expiration)
         return serializer.dumps({'id': self.id})
 
 
