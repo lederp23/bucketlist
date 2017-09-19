@@ -1,4 +1,3 @@
-import urllib
 import time
 import os
 import sys
@@ -9,12 +8,10 @@ currentdir = os.path.dirname(os.path.abspath(
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 from unittest import TestCase
-from flask_sqlalchemy import SQLAlchemy
 from db_setup import app, db
 from v1.accounts.models import User
 from v1.api.models import BucketList, Item
 from urls import urls
-import json
 from config import TestingConfig
 
 app.url_map.strict_slashes = False
@@ -42,10 +39,10 @@ class MyTest(TestCase):
         token = data['access_token']
         self.headers = {'token': token}
 
-        self.payload2 = json.dumps({'username': 'lederp2', 'password': 'lederp2',
+        self.payload2 = json.dumps({'username': 'lederp2',
+                                    'password': 'lederp2',
                                     'email': 'lederp2@gmail.com'})
-        response2 = self.test_app.post(
-            "/api/v1/auth/register", data=self.payload2)
+        self.test_app.post("/api/v1/auth/register", data=self.payload2)
 
     def tearDown(self):
         db.drop_all()

@@ -6,13 +6,11 @@ currentdir = os.path.dirname(os.path.abspath(
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 from flask import g
-from sqlalchemy import Column, Integer, String
-from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Integer, String
 from itsdangerous import (TimedJSONWebSignatureSerializer
                           as Serializer, BadSignature, SignatureExpired)
 from werkzeug.security import generate_password_hash, check_password_hash
 from v1.api.models import BucketList
-from flask import Flask
 from db_setup import app, db
 
 
