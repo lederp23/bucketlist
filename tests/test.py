@@ -312,6 +312,13 @@ class MyTest(TestCase):
         # asserts that the bucketlist is updated
         self.assertTrue(data['result'])
 
+        # asserts that a bucketlist cannot be set to existing name
+        response = self.test_app.put("/api/v1/bucketlists/1",
+                                     headers=self.headers,
+                                     data=payload)
+        data = json.loads(response.get_data(as_text=True))
+        self.assertEqual(data['message'], 'bucketlist2 is already in use')
+
         # asserts that a user cannot update bucketlist with wrong token
         headers = {'token': 'wrong token'}
         response = self.test_app.put("/api/v1/bucketlists/1",
@@ -319,8 +326,9 @@ class MyTest(TestCase):
         self.assertEqual(response.status_code, 401)
 
         # asserts status_code 404 if bucketlist is not found
-        response = self.test_app.put("/api/v1/bucketlists/6",
-                                     headers=self.headers, data=payload)
+        response = self.test_app.put("/api/v1/bucketlists/22",
+                                     headers=self.headers,
+                                     data=self.bucketlist_payload)
         self.assertEqual(response.status_code, 404)
 
     def test_delete_bucketlist(self):
@@ -358,6 +366,14 @@ class MyTest(TestCase):
 
         # asserts that the item has been added
         self.assertEqual(data['item']['name'], 'item1')
+
+        response = self.test_app.post("/api/v1/bucketlists/1/items/",
+                                      headers=self.headers,
+                                      data=self.item_payload)
+        data = json.loads(response.get_data(as_text=True))
+
+        # asserts that an item cannot be added twice
+        self.assertEqual(data['message'], 'item1 already exists')
 
         # asserts status_code 404 if name of item is not provided
         response = self.test_app.post("/api/v1/bucketlists/1/items/",
@@ -416,9 +432,18 @@ class MyTest(TestCase):
         self.assertEqual(response.status_code, 404)
 
         # asserts status_code 404 if item is not found
+        payload2 = json.dumps({'name': 'item3', 'done': True})
         response = self.test_app.put("/api/v1/bucketlists/1/items/6",
-                                     headers=self.headers, data=payload)
+                                     headers=self.headers, data=payload2)
         self.assertEqual(response.status_code, 404)
+
+        response = self.test_app.put("/api/v1/bucketlists/1/items/1",
+                                     headers=self.headers,
+                                     data=payload)
+        data = json.loads(response.get_data(as_text=True))
+
+        # asserts that an item cannot be renamed to existing name
+        self.assertEqual(data['message'], 'item2 is already in use')
 
     def test_delete_item(self):
         """Tests deleting a bucketlist item"""
