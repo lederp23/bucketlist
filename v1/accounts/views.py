@@ -25,8 +25,6 @@ def login(request):
         abort(make_response(json.dumps(
             {"message": "password missing"}), 400))
     password = data['password']
-    if '' in [username, password]:
-        return jsonify({'error': 'empty username and password'})
     if not re.match('^[a-zA-Z0-9-_]*$', username):
         return jsonify({'error': 'username cannot have special characters'})
     user = db.session.query(User).filter_by(username=username).first()
